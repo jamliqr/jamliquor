@@ -5,33 +5,23 @@
 - [🧰 README](./README.md)
 - [🧼 Cleanroom Policy](./cleanroom.md)
 
-<div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+## 🌟 Core Principles
+JamLiquor is built on five non-negotiable principles. Each one is documented in its own dedicated page:
 
-  <a href="./EDGE.md" style="width: 100%; max-width: 600px; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; text-decoration: none;">
-    <h3>⚡ Lightweight by Design</h3>
-    <p>Efficient at the edge. Designed for minimalism without compromise.</p>
-  </a>
+> [!TIP] ⚡ [Lightweight by Design](./EDGE.md)
+> Efficient at the edge. Designed for minimalism without compromise.
 
-  <a href="./DECENTRALIZATION.md" style="width: 100%; max-width: 600px; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; text-decoration: none;">
-    <h3>🌐 Real Decentralization</h3>
-    <p>No central backdoors. No soft capture. Just real distributed infrastructure.</p>
-  </a>
+> [!INFO] 🌐 [Real Decentralization](./DECENTRALIZATION.md)
+> No central backdoors. No soft capture. Just real distributed infrastructure.
 
-  <a href="./AI.md" style="width: 100%; max-width: 600px; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; text-decoration: none;">
-    <h3>🧠 Adaptability Through Inference</h3>
-    <p>Embedded AI for adaptive behavior — edge-aware, context-smart.</p>
-  </a>
+> [!NOTE] 🧠 [Adaptability Through Inference](./AI.md)
+> Embedded AI for adaptive behavior — edge-aware, context-smart.
 
-  <a href="./PQC.md" style="width: 100%; max-width: 600px; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; text-decoration: none;">
-    <h3>🔐 Quantum Resistance</h3>
-    <p>Cryptography that outlives quantum threats. Built for a longer tomorrow.</p>
-  </a>
+> [!WARNING] 🔐 [Quantum Resistance](./PQC.md)
+> Cryptography that outlives quantum threats. Built for a longer tomorrow.
 
-  <a href="./ARCHITECTURE.md" style="width: 100%; max-width: 600px; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; text-decoration: none;">
-    <h3>🧱 Simplicity Is Strength</h3>
-    <p>Elegant, composable architecture. Complexity kills — simplicity scales.</p>
-  </a>
+> [!SUCCESS] 🧱 [Simplicity Is Strength](./ARCHITECTURE.md)
+> Elegant, composable architecture. Complexity kills — simplicity scales.
 
-</div>
 
 - [⚠️ Disclaimer](./DISCLAIMER.md)

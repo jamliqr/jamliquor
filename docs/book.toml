@@ -1,0 +1,16 @@
+[book]
+title = "JamLiquor Documentation"
+author = "JamLiquor Contributors"
+description = "A cleanroom JAM client built for the edge, simplicity, adaptability, and post-quantum readiness."
+language = "en"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/jamliqr/jamliquor"
+site-url = "/docs/"
+additional-css = ["custom.css"]
+
+[output.html.fold]
+enable = true
+level = 2

@@ -3,7 +3,7 @@
 - [📘 JamLiquor Docs](./index.md)
   - [Manifesto](./MANIFESTO.md)
   - [Readme](./README.md)
-  - [Cleanroom Policy](./cleanroom.md)
+  - [Cleanroom Policy](./CLEANROOM.md)
 
 - [🧭 Core Principles](./index.md)
   - [1. Lightweight by Design](./EDGE.md)

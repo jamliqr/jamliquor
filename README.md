@@ -46,7 +46,7 @@ Minimalist, auditable, and modular. No unnecessary cryptographic gymnastics.
 
 | Component          | Description                           | Status          |
 | ------------------ | ------------------------------------- | --------------- |
-| `importer/`        | JAM-compliant block/state validation  | ⚪ Planned      |
+| `importer/`        | JAM-compliant block/state validation  | 🟡 In Progress  |
 | `authorer/`        | SAFROLE-based block production engine | ⚪ Planned      |
 | `vm/`              | PolkaVM (RISC-V) execution backend    | ⚪ Planned      |
 | `extensions/pqc/`  | PQ-safe signatures (Dilithium)        | ⚪ Experimental |

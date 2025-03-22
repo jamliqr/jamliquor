@@ -55,7 +55,7 @@ Minimalist, auditable, and modular. No unnecessary cryptographic gymnastics.
 
 ---
 
-## 📦 Milestone Roadmap (JAM Prize Alignment)
+## 📦 Milestone Roadmap
 
 ### Milestone 1: **Importer**
 

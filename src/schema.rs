@@ -1,5 +1,33 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug)]
+pub struct State {
+    last_slot: u64,    // Tracks last processed slot
+    counter: u64,      // Placeholder for state (e.g., from extrinsics)
+}
+
+impl State {
+    pub fn new() -> Self {
+        State { last_slot: 0, counter: 0 }
+    }
+
+    pub fn get_last_slot(&self) -> u64 {
+        self.last_slot
+    }
+
+    pub fn get_counter(&self) -> u64 {
+        self.counter
+    }
+
+    pub fn apply_block(&mut self, block: &Block) -> Result<(), anyhow::Error> {
+        // Update slot
+        self.last_slot = block.header.slot as u64;
+        // Simple transition: increment counter (replace with JAM logic later)
+        self.counter += block.extrinsic.tickets.len() as u64; // Example: count extrinsics
+        Ok(())
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OpaqueHash(#[serde(with = "hex")] [u8; 32]);
 

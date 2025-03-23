@@ -1,25 +1,35 @@
-use crate::schema::Block;
-use anyhow::{Context, Result};
-use std::fs;
+use crate::schema::{Block, State};
+use anyhow::Result;
+use std::path::Path;
+use std::fs::File;
 
 pub struct Importer {
-    test_vectors_dir: String,
+    state: State,
 }
 
 impl Importer {
-    pub fn new(test_vectors_dir: &str) -> Self {
-        Importer {
-            test_vectors_dir: test_vectors_dir.to_string(),
-        }
+    pub fn new() -> Self {
+        Importer { state: State::new() }
     }
 
-    pub fn import_block(&self, filename: &str) -> Result<Block> {
-        let path = format!("{}/codec/data/{}", self.test_vectors_dir, filename);
-        let json =
-            fs::read_to_string(&path).with_context(|| format!("Failed to read file: {}", path))?;
-        let block: Block =
-            serde_json::from_str(&json).with_context(|| "Failed to parse block JSON")?;
-        println!("Imported block at slot: {}", block.header.slot);
+    pub fn import_block<P: AsRef<Path>>(&mut self, path: P) -> Result<Block> {
+        let file = File::open(path)?;
+        let block: Block = serde_json::from_reader(file)?;
+        self.validate_and_apply_block(&block)?;
         Ok(block)
+    }
+
+    fn validate_and_apply_block(&mut self, block: &Block) -> Result<()> {
+        // Basic validation: ensure slot increases
+        if u64::from(block.header.slot) <= self.state.get_last_slot() {
+            return Err(anyhow::anyhow!("Slot must increase: {}", block.header.slot));
+        }
+        // Apply state transition (to be refined with JAM rules)
+        self.state.apply_block(block)?;
+        Ok(())
+    }
+
+    pub fn state(&self) -> &State {
+        &self.state
     }
 }

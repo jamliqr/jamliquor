@@ -31,6 +31,13 @@ impl State {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OpaqueHash(#[serde(with = "hex")] [u8; 32]);
 
+impl OpaqueHash {
+    pub fn as_bytes(&self) -> &[u8; 32] {
+        &self.0
+    }
+    
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EpochMark {
     pub entropy: OpaqueHash,

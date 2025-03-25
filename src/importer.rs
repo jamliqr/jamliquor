@@ -85,6 +85,11 @@ impl Importer {
             return Err(anyhow::anyhow!("Seal cannot be empty"));
         }
 
+        // Validate entropy_source
+        if block.header.entropy_source.is_empty() {
+            return Err(anyhow::anyhow!("Entropy source cannot be empty"));
+        }
+
         // Apply state transition (to be refined with JAM rules)
         self.state.apply_block(block)?;
         Ok(())

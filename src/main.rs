@@ -78,6 +78,12 @@ mod tests {
         // Explicit seal check
         assert!(!block.header.seal.is_empty(), "Seal cannot be empty");
 
+        // Explicit entropy_source check
+        assert!(
+            !block.header.entropy_source.is_empty(),
+            "Entropy source cannot be empty"
+        );
+
         Ok(())
     }
 }

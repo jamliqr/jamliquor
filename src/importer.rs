@@ -80,6 +80,11 @@ impl Importer {
             return Err(anyhow::anyhow!("Offenders mark cannot be empty"));
         }
 
+        // Validate seal
+        if block.header.seal.is_empty() {
+            return Err(anyhow::anyhow!("Seal cannot be empty"));
+        }
+
         // Apply state transition (to be refined with JAM rules)
         self.state.apply_block(block)?;
         Ok(())

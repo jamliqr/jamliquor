@@ -75,6 +75,9 @@ mod tests {
             "Offenders mark cannot be empty"
         );
 
+        // Explicit seal check
+        assert!(!block.header.seal.is_empty(), "Seal cannot be empty");
+
         Ok(())
     }
 }

@@ -24,9 +24,12 @@ impl State {
 
     pub fn apply_block(&mut self, block: &Block) -> Result<(), anyhow::Error> {
         self.last_slot = block.header.slot as u64;
-        // Count valid tickets (for now, assume all are valid; add validation later)
-        let ticket_count = block.extrinsic.tickets.len() as u64;
-        self.counter += ticket_count;
+        // Count only valid tickets
+        let valid_ticket_count = block.extrinsic.tickets
+            .iter()
+            .filter(|ticket| ticket.attempt <= 255) // u8 max, always true, placeholder for stricter rules
+            .count() as u64;
+        self.counter += valid_ticket_count;
         Ok(())
     }
 }

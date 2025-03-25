@@ -53,6 +53,17 @@ impl Importer {
             }
         }
 
+        // Validate author_index if epoch_mark is present
+        if let Some(epoch_mark) = &block.header.epoch_mark {
+            if block.header.author_index as usize >= epoch_mark.validators.len() {
+                return Err(anyhow::anyhow!(
+                    "Author index {} out of bounds (max {})",
+                    block.header.author_index,
+                    epoch_mark.validators.len() - 1
+                ));
+            }
+        }
+
         // Apply state transition (to be refined with JAM rules)
         self.state.apply_block(block)?;
         Ok(())

@@ -47,6 +47,17 @@ mod tests {
         let expected_count =
             (block.extrinsic.tickets.len() + block.extrinsic.preimages.len()) as u64;
         assert_eq!(importer.state().get_counter(), expected_count);
+
+        // Explicit author_index check
+        if let Some(epoch_mark) = &block.header.epoch_mark {
+            assert!(
+                block.header.author_index as usize <= epoch_mark.validators.len() - 1,
+                "Author index {} exceeds validator count {}",
+                block.header.author_index,
+                epoch_mark.validators.len()
+            );            
+        }
+
         Ok(())
     }
 }

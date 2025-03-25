@@ -55,7 +55,18 @@ mod tests {
                 "Author index {} exceeds validator count {}",
                 block.header.author_index,
                 epoch_mark.validators.len()
-            );            
+            );
+        }
+
+        // Explicit tickets_mark check
+        if let Some(tickets_mark) = &block.header.tickets_mark {
+            assert_eq!(
+                tickets_mark.len(),
+                block.extrinsic.tickets.len(),
+                "Tickets mark count ({}) mismatch with extrinsic tickets count ({})",
+                tickets_mark.len(),
+                block.extrinsic.tickets.len()
+            )
         }
 
         Ok(())

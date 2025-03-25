@@ -64,6 +64,17 @@ impl Importer {
             }
         }
 
+        // Validate tickets_mark if present
+        if let Some(tickets_mark) = &block.header.tickets_mark {
+            if tickets_mark.len() != block.extrinsic.tickets.len() {
+                return Err(anyhow::anyhow!(
+                    "Tickets mark count ({}) mismatch with extrinsic tickets count ({})",
+                    tickets_mark.len(),
+                    block.extrinsic.tickets.len()
+                ));
+            }
+        }
+
         // Apply state transition (to be refined with JAM rules)
         self.state.apply_block(block)?;
         Ok(())

@@ -1,12 +1,12 @@
-use crate::schema::{Block, State};
+use crate::schema::{Block, Header, Extrinsic, State};
 use anyhow::Result;
 use std::fs::File;
 use std::path::Path;
 
 pub struct Importer {
     state: State,
-    last_block_hash: Option<[u8; 32]>, // Track last block hash for parent validation
-    last_state_root: Option<[u8; 32]>, // New field to track state root
+    last_block_hash: Option<[u8; 32]>,
+    last_state_root: Option<[u8; 32]>,
 }
 
 impl Importer {
@@ -18,7 +18,6 @@ impl Importer {
         }
     }
 
-    // New method to set initial state for testing or chaining
     pub fn set_initial_state(&mut self, last_hash: [u8; 32], last_root: [u8; 32]) {
         self.last_block_hash = Some(last_hash);
         self.last_state_root = Some(last_root);
@@ -28,70 +27,64 @@ impl Importer {
         let file = File::open(path)?;
         let block: Block = serde_json::from_reader(file)?;
         self.validate_and_apply_block(&block)?;
-        self.last_block_hash = Some(*block.header.extrinsic_hash.as_bytes()); // Update last block hash
-        self.last_state_root = Some(*block.header.parent_state_root.as_bytes()); // Update last state root
+        self.last_block_hash = Some(*block.header.extrinsic_hash.as_bytes());
+        self.last_state_root = Some(*block.header.parent_state_root.as_bytes());
         Ok(block)
     }
 
     fn validate_and_apply_block(&mut self, block: &Block) -> Result<()> {
-        // Basic validation: ensure slot increases
-        if u64::from(block.header.slot) <= self.state.get_last_slot() {
-            return Err(anyhow::anyhow!("Slot must increase: {}", block.header.slot));
-        }
+        self.validate_header(&block.header)?;
+        self.validate_extrinsic(&block.header, &block.extrinsic)?;
+        self.state.apply_block(block)?;
+        Ok(())
+    }
 
-        // Validate parent hash (if not genersis)
+    fn validate_header(&self, header: &Header) -> Result<()> {
+        if u64::from(header.slot) <= self.state.get_last_slot() {
+            return Err(anyhow::anyhow!("Slot must increase: {}", header.slot));
+        }
         if let Some(last_hash) = self.last_block_hash {
-            if block.header.parent.as_bytes() != &last_hash {
+            if header.parent.as_bytes() != &last_hash {
                 return Err(anyhow::anyhow!("Parent hash mismatch"));
             }
         }
-
-        // Validate state root (if not genesis)
         if let Some(last_root) = self.last_state_root {
-            if block.header.parent_state_root.as_bytes() != &last_root {
+            if header.parent_state_root.as_bytes() != &last_root {
                 return Err(anyhow::anyhow!("Parent state root mismatch"));
             }
         }
-
-        // Validate author_index if epoch_mark is present
-        if let Some(epoch_mark) = &block.header.epoch_mark {
-            if block.header.author_index as usize >= epoch_mark.validators.len() {
+        if let Some(epoch_mark) = &header.epoch_mark {
+            if header.author_index as usize >= epoch_mark.validators.len() {
                 return Err(anyhow::anyhow!(
                     "Author index {} out of bounds (max {})",
-                    block.header.author_index,
+                    header.author_index,
                     epoch_mark.validators.len() - 1
                 ));
             }
         }
+        if header.offenders_mark.is_empty() {
+            return Err(anyhow::anyhow!("Offenders mark cannot be empty"));
+        }
+        if header.seal.is_empty() {
+            return Err(anyhow::anyhow!("Seal cannot be empty"));
+        }
+        if header.entropy_source.is_empty() {
+            return Err(anyhow::anyhow!("Entropy source cannot be empty"));
+        }
+        Ok(())
+    }
 
-        // Validate tickets_mark if present
-        if let Some(tickets_mark) = &block.header.tickets_mark {
-            if tickets_mark.len() != block.extrinsic.tickets.len() {
+    fn validate_extrinsic(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
+        // Restore tickets_mark validation here
+        if let Some(tickets_mark) = &header.tickets_mark {
+            if tickets_mark.len() != extrinsic.tickets.len() {
                 return Err(anyhow::anyhow!(
-                    "Tickets mark count ({}) mismatch with extrinsic tickets count ({})",
+                    "Tickets mark count ({}) mismatches extrinsic tickets count ({})",
                     tickets_mark.len(),
-                    block.extrinsic.tickets.len()
+                    extrinsic.tickets.len()
                 ));
             }
         }
-
-        // Validate offenders_mark
-        if block.header.offenders_mark.is_empty() {
-            return Err(anyhow::anyhow!("Offenders mark cannot be empty"));
-        }
-
-        // Validate seal
-        if block.header.seal.is_empty() {
-            return Err(anyhow::anyhow!("Seal cannot be empty"));
-        }
-
-        // Validate entropy_source
-        if block.header.entropy_source.is_empty() {
-            return Err(anyhow::anyhow!("Entropy source cannot be empty"));
-        }
-
-        // Apply state transition (to be refined with JAM rules)
-        self.state.apply_block(block)?;
         Ok(())
     }
 

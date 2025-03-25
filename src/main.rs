@@ -28,7 +28,9 @@ mod tests {
         // Verify the block was imported successfully
         assert!(block.header.slot > 0, "Block slot should be positive");
         assert_eq!(importer.state().get_last_slot(), block.header.slot as u64);
-        assert_eq!(importer.state().get_counter(), block.extrinsic.tickets.len() as u64);
+        // Update to match ticket + preimage count
+        let expected_count = (block.extrinsic.tickets.len() + block.extrinsic.preimages.len()) as u64;
+        assert_eq!(importer.state().get_counter(), expected_count);
         Ok(())
     }
 }

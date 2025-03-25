@@ -25,11 +25,20 @@ impl State {
     pub fn apply_block(&mut self, block: &Block) -> Result<(), anyhow::Error> {
         self.last_slot = block.header.slot as u64;
         // Count only valid tickets
-        let valid_ticket_count = block.extrinsic.tickets
+        let valid_ticket_count = block
+            .extrinsic
+            .tickets
             .iter()
             .filter(|ticket| ticket.attempt <= 255) // u8 max, always true, placeholder for stricter rules
             .count() as u64;
-        self.counter += valid_ticket_count;
+        // Count valid preimages (non-empty blob)
+        let valid_preimage_count = block
+            .extrinsic
+            .preimages
+            .iter()
+            .filter(|preimage| !preimage.blob.is_empty())
+            .count() as u64;
+        self.counter += valid_ticket_count + valid_preimage_count;
         Ok(())
     }
 }

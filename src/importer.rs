@@ -75,6 +75,11 @@ impl Importer {
             }
         }
 
+        // Validate offenders_mark
+        if block.header.offenders_mark.is_empty() {
+            return Err(anyhow::anyhow!("Offenders mark cannot be empty"));
+        }
+
         // Apply state transition (to be refined with JAM rules)
         self.state.apply_block(block)?;
         Ok(())

@@ -69,6 +69,12 @@ mod tests {
             )
         }
 
+        // Explicit offenders_mark check
+        assert!(
+            !block.header.offenders_mark.is_empty(),
+            "Offenders mark cannot be empty"
+        );
+
         Ok(())
     }
 }

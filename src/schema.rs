@@ -2,8 +2,67 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct State {
-    last_slot: u64, // Tracks last processed slot
-    counter: u64,   // Placeholder for state (e.g., from extrinsics)
+    last_slot: u64,    // Tracks last processed slot
+    counter: u64,      // Total valid tickets and preimages
+    ticket_state: TicketState,
+}
+
+#[derive(Debug)]
+pub struct TicketState {
+    total_tickets: u64,
+    valid_tickets: u64,
+    invalid_tickets: u64,
+    last_ticket_id: Option<OpaqueHash>,
+}
+
+impl TicketState {
+    pub fn new() -> Self {
+        Self {
+            total_tickets: 0,
+            valid_tickets: 0,
+            invalid_tickets: 0,
+            last_ticket_id: None,
+        }
+    }
+
+    pub fn apply_tickets(&mut self, tickets: &[TicketEnvelope], tickets_mark: &[TicketBody]) -> Result<(), anyhow::Error> {
+        // Validate ticket counts match
+        if tickets.len() != tickets_mark.len() {
+            return Err(anyhow::anyhow!(
+                "Ticket count mismatch: {} tickets vs {} marks",
+                tickets.len(),
+                tickets_mark.len()
+            ));
+        }
+
+        // Update total tickets
+        self.total_tickets += tickets.len() as u64;
+
+        // Process each ticket
+        for (ticket, mark) in tickets.iter().zip(tickets_mark.iter()) {
+            // Validate ticket attempt matches mark
+            if ticket.attempt != mark.attempt {
+                self.invalid_tickets += 1;
+                continue;
+            }
+
+            // Validate ticket
+            if let Err(_) = ticket.validate() {
+                self.invalid_tickets += 1;
+                continue;
+            }
+
+            // Update state
+            self.valid_tickets += 1;
+            self.last_ticket_id = Some(mark.id);
+        }
+
+        Ok(())
+    }
+
+    pub fn get_stats(&self) -> (u64, u64, u64) {
+        (self.total_tickets, self.valid_tickets, self.invalid_tickets)
+    }
 }
 
 impl State {
@@ -11,6 +70,7 @@ impl State {
         State {
             last_slot: 0,
             counter: 0,
+            ticket_state: TicketState::new(),
         }
     }
 
@@ -22,15 +82,19 @@ impl State {
         self.counter
     }
 
+    pub fn get_ticket_stats(&self) -> (u64, u64, u64) {
+        self.ticket_state.get_stats()
+    }
+
     pub fn apply_block(&mut self, block: &Block) -> Result<(), anyhow::Error> {
+        // Update slot
         self.last_slot = block.header.slot as u64;
-        // Count only valid tickets
-        let valid_ticket_count = block
-            .extrinsic
-            .tickets
-            .iter()
-            .filter(|ticket| ticket.attempt <= 255) // u8 max, always true, placeholder for stricter rules
-            .count() as u64;
+
+        // Process tickets if tickets_mark exists
+        if let Some(tickets_mark) = &block.header.tickets_mark {
+            self.ticket_state.apply_tickets(&block.extrinsic.tickets, tickets_mark)?;
+        }
+
         // Count valid preimages (non-empty blob)
         let valid_preimage_count = block
             .extrinsic
@@ -38,12 +102,14 @@ impl State {
             .iter()
             .filter(|preimage| !preimage.blob.is_empty())
             .count() as u64;
-        self.counter += valid_ticket_count + valid_preimage_count;
+
+        // Update counter with valid tickets and preimages
+        self.counter = self.ticket_state.valid_tickets + valid_preimage_count;
         Ok(())
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct OpaqueHash(#[serde(with = "hex")] [u8; 32]);
 
 impl OpaqueHash {
@@ -89,10 +155,31 @@ pub struct TicketEnvelope {
     pub signature: Vec<u8>,
 }
 
+impl TicketEnvelope {
+    pub fn validate(&self) -> Result<(), anyhow::Error> {
+        // Validate signature length (should be 64 bytes for ed25519)
+        if self.signature.len() != 64 {
+            return Err(anyhow::anyhow!(
+                "Invalid signature length: {} (expected 64)",
+                self.signature.len()
+            ));
+        }
+
+        Ok(())
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TicketBody {
     pub id: OpaqueHash,
     pub attempt: u8,
+}
+
+impl TicketBody {
+    pub fn validate(&self) -> Result<(), anyhow::Error> {
+        // No validation needed for attempt since u8 already enforces 0-255 range
+        Ok(())
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -166,5 +253,119 @@ mod hex_vec {
             .strip_prefix("0x")
             .ok_or_else(|| D::Error::custom("expected hex string with or without 0x"))?;
         hex::decode(s).map_err(D::Error::custom)
+    }
+}
+
+// Constants for entropy validation
+const ENTROPY_SOURCE_SIZE: usize = 96; // Total entropy source size
+const ENTROPY_CHUNK_SIZE: usize = 32;  // Size of each entropy value
+
+#[derive(Debug)]
+pub struct EntropySource {
+    current_entropy: [u8; ENTROPY_CHUNK_SIZE],
+    next_entropy: [u8; ENTROPY_CHUNK_SIZE],
+    final_entropy: [u8; ENTROPY_CHUNK_SIZE],
+}
+
+impl EntropySource {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, anyhow::Error> {
+        if bytes.len() != ENTROPY_SOURCE_SIZE {
+            return Err(anyhow::anyhow!(
+                "Invalid entropy source size: {} (expected {})",
+                bytes.len(),
+                ENTROPY_SOURCE_SIZE
+            ));
+        }
+
+        let mut current_entropy = [0u8; ENTROPY_CHUNK_SIZE];
+        let mut next_entropy = [0u8; ENTROPY_CHUNK_SIZE];
+        let mut final_entropy = [0u8; ENTROPY_CHUNK_SIZE];
+
+        current_entropy.copy_from_slice(&bytes[0..ENTROPY_CHUNK_SIZE]);
+        next_entropy.copy_from_slice(&bytes[ENTROPY_CHUNK_SIZE..2*ENTROPY_CHUNK_SIZE]);
+        final_entropy.copy_from_slice(&bytes[2*ENTROPY_CHUNK_SIZE..]);
+
+        Ok(Self {
+            current_entropy,
+            next_entropy,
+            final_entropy,
+        })
+    }
+
+    pub fn validate_with_epoch_mark(&self, epoch_mark: &EpochMark) -> Result<(), anyhow::Error> {
+        // In JAM protocol, the current entropy should match the epoch mark entropy
+        if self.current_entropy != *epoch_mark.entropy.as_bytes() {
+            return Err(anyhow::anyhow!("Current entropy mismatch with epoch mark entropy"));
+        }
+
+        Ok(())
+    }
+
+    pub fn get_current_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
+        &self.current_entropy
+    }
+
+    pub fn get_next_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
+        &self.next_entropy
+    }
+
+    pub fn get_final_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
+        &self.final_entropy
+    }
+}
+
+impl Header {
+    pub fn validate_entropy(&self) -> Result<EntropySource, anyhow::Error> {
+        // Parse and validate entropy source format
+        let entropy_source = EntropySource::from_bytes(&self.entropy_source)?;
+
+        // If we have an epoch mark, validate entropy values match
+        if let Some(epoch_mark) = &self.epoch_mark {
+            entropy_source.validate_with_epoch_mark(epoch_mark)?;
+        }
+
+        Ok(entropy_source)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_entropy_source_validation() -> Result<(), anyhow::Error> {
+        // Create a valid entropy source (96 bytes)
+        let mut entropy_bytes = Vec::with_capacity(96);
+        entropy_bytes.extend_from_slice(&[1u8; 32]); // current entropy
+        entropy_bytes.extend_from_slice(&[2u8; 32]); // next entropy
+        entropy_bytes.extend_from_slice(&[3u8; 32]); // final entropy
+
+        // Test valid entropy source
+        let entropy_source = EntropySource::from_bytes(&entropy_bytes)?;
+        assert_eq!(entropy_source.get_current_entropy(), &[1u8; 32]);
+        assert_eq!(entropy_source.get_next_entropy(), &[2u8; 32]);
+        assert_eq!(entropy_source.get_final_entropy(), &[3u8; 32]);
+
+        // Test invalid size
+        let invalid_bytes = vec![0u8; 64];
+        assert!(EntropySource::from_bytes(&invalid_bytes).is_err());
+
+        // Test epoch mark validation
+        let epoch_mark = EpochMark {
+            entropy: OpaqueHash([1u8; 32]),
+            tickets_entropy: OpaqueHash([2u8; 32]),
+            validators: vec![],
+        };
+        assert!(entropy_source.validate_with_epoch_mark(&epoch_mark).is_ok());
+
+        // Test epoch mark mismatch
+        let invalid_epoch_mark = EpochMark {
+            entropy: OpaqueHash([4u8; 32]),
+            tickets_entropy: OpaqueHash([5u8; 32]),
+            validators: vec![],
+        };
+        assert!(entropy_source.validate_with_epoch_mark(&invalid_epoch_mark).is_err());
+
+        Ok(())
     }
 }

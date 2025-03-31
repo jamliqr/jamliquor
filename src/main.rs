@@ -43,10 +43,38 @@ mod tests {
         // Verify the block was imported successfully
         assert!(block.header.slot > 0, "Block slot should be positive");
         assert_eq!(importer.state().get_last_slot(), block.header.slot as u64);
-        // Update to match ticket + preimage count
-        let expected_count =
-            (block.extrinsic.tickets.len() + block.extrinsic.preimages.len()) as u64;
-        assert_eq!(importer.state().get_counter(), expected_count);
+
+        // Get ticket stats
+        let (total_tickets, valid_tickets, invalid_tickets) = importer.state().get_ticket_stats();
+        
+        // Verify ticket counts
+        if let Some(tickets_mark) = &block.header.tickets_mark {
+            assert_eq!(
+                total_tickets,
+                tickets_mark.len() as u64,
+                "Total tickets count mismatch"
+            );
+            assert_eq!(
+                valid_tickets + invalid_tickets,
+                total_tickets,
+                "Valid + invalid tickets should equal total"
+            );
+        }
+
+        // Count valid preimages (non-empty blob)
+        let valid_preimage_count = block
+            .extrinsic
+            .preimages
+            .iter()
+            .filter(|preimage| !preimage.blob.is_empty())
+            .count() as u64;
+
+        // Verify total counter equals valid tickets plus valid preimages
+        assert_eq!(
+            importer.state().get_counter(),
+            valid_tickets + valid_preimage_count,
+            "Counter should equal valid tickets + valid preimages"
+        );
 
         // Explicit author_index check
         if let Some(epoch_mark) = &block.header.epoch_mark {

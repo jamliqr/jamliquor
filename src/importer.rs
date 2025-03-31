@@ -53,6 +53,7 @@ impl Importer {
                 return Err(anyhow::anyhow!("Parent state root mismatch"));
             }
         }
+        let entropy_source = header.validate_entropy()?;
         if let Some(epoch_mark) = &header.epoch_mark {
             if header.author_index as usize >= epoch_mark.validators.len() {
                 return Err(anyhow::anyhow!(
@@ -68,14 +69,10 @@ impl Importer {
         if header.seal.is_empty() {
             return Err(anyhow::anyhow!("Seal cannot be empty"));
         }
-        if header.entropy_source.is_empty() {
-            return Err(anyhow::anyhow!("Entropy source cannot be empty"));
-        }
         Ok(())
     }
 
     fn validate_extrinsic(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
-        // Restore tickets_mark validation here
         if let Some(tickets_mark) = &header.tickets_mark {
             if tickets_mark.len() != extrinsic.tickets.len() {
                 return Err(anyhow::anyhow!(
@@ -83,6 +80,16 @@ impl Importer {
                     tickets_mark.len(),
                     extrinsic.tickets.len()
                 ));
+            }
+
+            for (ticket, mark) in extrinsic.tickets.iter().zip(tickets_mark.iter()) {
+                if ticket.attempt != mark.attempt {
+                    return Err(anyhow::anyhow!(
+                        "Ticket attempt mismatch: {} vs {}",
+                        ticket.attempt,
+                        mark.attempt
+                    ));
+                }
             }
         }
         Ok(())

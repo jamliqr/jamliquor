@@ -1,169 +1,101 @@
 <!DOCTYPE HTML>
-<html lang="en" class="light sidebar-visible" dir="ltr">
+<html lang="en">
     <head>
-        <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>🧪 AI Inference - JamLiquor Documentation</title>
-
-
-        <!-- Custom HTML head -->
-
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="A cleanroom JAM client built for the edge, simplicity, adaptability, and post-quantum readiness.">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
         <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme stylesheets -->
+        <!-- Custom theme -->
+        
         <link rel="stylesheet" href="custom.css">
+        
 
+        
 
-        <!-- Provide site root to javascript -->
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "coal" : "light";
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
         </script>
-        <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
+        <script src="store.js"></script>
+
     </head>
-    <body>
-    <div id="body-container">
-        <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script>
-            try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
-
-                if (theme.startsWith('"') && theme.endsWith('"')) {
-                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
-                }
-
-                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
-                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
-                }
-            } catch (e) { }
-        </script>
-
+    <body class="light">
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script>
-            var theme;
-            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
-            if (theme === null || theme === undefined) { theme = default_theme; }
-            const html = document.documentElement;
-            html.classList.remove('light')
-            html.classList.add(theme);
-            html.classList.add("js");
+        <script type="text/javascript">
+            var theme = store.get('mdbook-theme');
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
         </script>
-
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
-            if (document.body.clientWidth >= 1080) {
-                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
-                sidebar = sidebar || 'visible';
-            } else {
-                sidebar = 'hidden';
-            }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+        <script type="text/javascript">
+            var sidebar = store.get('mdbook-sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <!-- populated by js -->
-            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
-            <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
-            </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
-                <div class="sidebar-resize-indicator"></div>
-            </div>
-        </nav>
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li><a href="index.html"><strong>1.</strong> 📘 JamLiquor Docs</a></li><li><ul class="section"><li><a href="MANIFESTO.html"><strong>1.1.</strong> Manifesto</a></li><li><a href="README.html"><strong>1.2.</strong> Readme</a></li><li><a href="CLEANROOM.html"><strong>1.3.</strong> Cleanroom Policy</a></li><li><a href="MILESTONE.html"><strong>1.4.</strong> Milestones &amp; Roadmap</a></li></ul></li><li><a href="index.html"><strong>2.</strong> 🧭 Core Principles</a></li><li><ul class="section"><li><a href="EDGE.html"><strong>2.1.</strong> Lightweight by Design</a></li><li><a href="DECENTRALIZATION.html"><strong>2.2.</strong> Real Decentralization</a></li><li><a href="AI.html" class="active"><strong>2.3.</strong> Adaptability Through Inference</a></li><li><a href="PQC.html"><strong>2.4.</strong> Quantum Resistance</a></li><li><a href="ARCHITECTURE.html"><strong>2.5.</strong> Simplicity is Strength</a></li></ul></li><li><a href="ARCHITECTURE.html"><strong>3.</strong> 🛠 Architecture</a></li><li><a href="DECENTRALIZATION.html"><strong>4.</strong> 🌐 Network</a></li><li><a href="AI.html" class="active"><strong>5.</strong> 🧪 AI Inference</a></li><li><a href="PQC.html"><strong>6.</strong> 🔐 Post-Quantum Cryptography</a></li><li><a href="MILESTONE.html"><strong>7.</strong> 🚀 Development Roadmap</a></li><li><a href="DISCLAIMER.html"><strong>8.</strong> ⚠️ Disclaimer</a></li></ul>
+        </div>
 
         <div id="page-wrapper" class="page-wrapper">
 
-            <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+            <div class="page" tabindex="-1">
+                
+                <div id="menu-bar" class="menu-bar">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
-                        </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
-                        </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                        </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
-                        </button>
+                        <i id="sidebar-toggle" class="fa fa-bars" title="Toggle sidebar"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush" title="Change theme"></i>
                     </div>
 
                     <h1 class="menu-title">JamLiquor Documentation</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                        <a href="print.html">
+                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
                         </a>
-                        <a href="https://github.com/jamliqr/jamliquor" title="Git repository" aria-label="Git repository">
-                            <i id="git-repository-button" class="fa fa-github"></i>
-                        </a>
-
                     </div>
                 </div>
-
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                    </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
-                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
-                    });
-                </script>
 
                 <div id="content" class="content">
-                    <main>
-                        <h1 id="-aimd--adaptability-through-inference"><a class="header" href="#-aimd--adaptability-through-inference">🤖 AI.md — Adaptability Through Inference</a></h1>
-<h2 id="-principle-adaptability-through-inference"><a class="header" href="#-principle-adaptability-through-inference">🔁 Principle: Adaptability Through Inference</a></h2>
+                    <a class="header" href="AI.html#-aimd--adaptability-through-inference" id="-aimd--adaptability-through-inference"><h1>🤖 AI.md — Adaptability Through Inference</h1></a>
+<a class="header" href="AI.html#-principle-adaptability-through-inference" id="-principle-adaptability-through-inference"><h2>🔁 Principle: Adaptability Through Inference</h2></a>
 <blockquote>
 <p>Static systems break. Adaptive systems evolve.</p>
 </blockquote>
 <p>JamLiquor is engineered to be <strong>contextually aware</strong>, able to <strong>optimize, react, and learn</strong> from its environment using lightweight AI inference. This transforms it from a passive executor into a <strong>self-regulating, intelligent node</strong>.</p>
 <hr />
-<h2 id="-why-ai-in-blockchain"><a class="header" href="#-why-ai-in-blockchain">🧠 Why AI in Blockchain?</a></h2>
+<a class="header" href="AI.html#-why-ai-in-blockchain" id="-why-ai-in-blockchain"><h2>🧠 Why AI in Blockchain?</h2></a>
 <p>Traditional blockchain nodes:</p>
 <ul>
 <li>Follow static logic</li>
@@ -178,19 +110,20 @@
 <li>✅ Real-time anomaly detection</li>
 </ul>
 <hr />
-<h2 id="-where-ai-lives-in-jamliquor"><a class="header" href="#-where-ai-lives-in-jamliquor">🧩 Where AI Lives in JamLiquor</a></h2>
-<h3 id="1-smart-contract-execution-inference-enabled-logic"><a class="header" href="#1-smart-contract-execution-inference-enabled-logic">1. <strong>Smart Contract Execution (Inference-Enabled Logic)</strong></a></h3>
+<a class="header" href="AI.html#-where-ai-lives-in-jamliquor" id="-where-ai-lives-in-jamliquor"><h2>🧩 Where AI Lives in JamLiquor</h2></a>
+<a class="header" href="AI.html#1-smart-contract-execution-inference-enabled-logic" id="1-smart-contract-execution-inference-enabled-logic"><h3>1. <strong>Smart Contract Execution (Inference-Enabled Logic)</strong></h3></a>
 <ul>
 <li>Contracts can make decisions based on external inputs or network telemetry</li>
 <li>Uses embedded models (e.g., logistic regression, tiny CNNs) via <a href="https://www.tinyml.org/">TinyML</a></li>
 </ul>
 <p>Example:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// Contract that adjusts fee dynamically based on predicted congestion
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Contract that adjusts fee dynamically based on predicted congestion
 env::set_fee(infer::predict_gas_price(inputs));
-<span class="boring">}</span></code></pre></pre>
-<h3 id="2-validator-intelligence"><a class="header" href="#2-validator-intelligence">2. <strong>Validator Intelligence</strong></a></h3>
+#}</code></pre></pre>
+<a class="header" href="AI.html#2-validator-intelligence" id="2-validator-intelligence"><h3>2. <strong>Validator Intelligence</strong></h3></a>
 <ul>
 <li>Nodes use inference to:
 <ul>
@@ -200,7 +133,7 @@ env::set_fee(infer::predict_gas_price(inputs));
 </ul>
 </li>
 </ul>
-<h3 id="3-local-optimization-on-edge"><a class="header" href="#3-local-optimization-on-edge">3. <strong>Local Optimization on Edge</strong></a></h3>
+<a class="header" href="AI.html#3-local-optimization-on-edge" id="3-local-optimization-on-edge"><h3>3. <strong>Local Optimization on Edge</strong></h3></a>
 <ul>
 <li>Inference models help low-power nodes:
 <ul>
@@ -211,7 +144,7 @@ env::set_fee(infer::predict_gas_price(inputs));
 </li>
 </ul>
 <hr />
-<h2 id="-architecture-overview"><a class="header" href="#-architecture-overview">🔍 Architecture Overview</a></h2>
+<a class="header" href="AI.html#-architecture-overview" id="-architecture-overview"><h2>🔍 Architecture Overview</h2></a>
 <p>Module: <code>jamliquor-ai</code></p>
 <ul>
 <li><code>inference.rs</code>: Load &amp; execute quantized models</li>
@@ -225,24 +158,23 @@ env::set_fee(infer::predict_gas_price(inputs));
 <li>Executed deterministically (no external randomness)</li>
 </ul>
 <hr />
-<h2 id="-model-types-and-tools"><a class="header" href="#-model-types-and-tools">🔬 Model Types and Tools</a></h2>
+<a class="header" href="AI.html#-model-types-and-tools" id="-model-types-and-tools"><h2>🔬 Model Types and Tools</h2></a>
 <p>JamLiquor uses minimal AI models that run without GPUs or cloud inference:</p>
-<div class="table-wrapper"><table><thead><tr><th>Model Type</th><th>Use Case</th><th>Size</th><th>Engine</th></tr></thead><tbody>
-<tr><td>Logistic Regression</td><td>Binary flag detection</td><td>~1KB</td><td>TinyML, ndarray</td></tr>
-<tr><td>Decision Trees</td><td>Threshold rules &amp; routing</td><td>~5–10KB</td><td><code>linfa-tree</code></td></tr>
-<tr><td>Tiny CNN</td><td>Pattern recognition (e.g. logs)</td><td>~32KB</td><td><code>micro-tflite</code></td></tr>
+<table><thead><tr><th> Model Type </th><th> Use Case                          </th><th> Size     </th><th> Engine         </th></tr></thead><tbody>
+<tr><td> Logistic Regression </td><td> Binary flag detection               </td><td> ~1KB     </td><td> TinyML, ndarray </td></tr>
+<tr><td> Decision Trees       </td><td> Threshold rules &amp; routing           </td><td> ~5–10KB </td><td> <code>linfa-tree</code>     </td></tr>
+<tr><td> Tiny CNN             </td><td> Pattern recognition (e.g. logs)     </td><td> ~32KB    </td><td> <code>micro-tflite</code>   </td></tr>
 </tbody></table>
-</div>
 <hr />
-<h2 id="-sample-use-cases"><a class="header" href="#-sample-use-cases">🔄 Sample Use Cases</a></h2>
-<h3 id="-adaptive-gas-pricing"><a class="header" href="#-adaptive-gas-pricing">🟢 Adaptive Gas Pricing</a></h3>
+<a class="header" href="AI.html#-sample-use-cases" id="-sample-use-cases"><h2>🔄 Sample Use Cases</h2></a>
+<a class="header" href="AI.html#-adaptive-gas-pricing" id="-adaptive-gas-pricing"><h3>🟢 Adaptive Gas Pricing</h3></a>
 <p>Contract reads mempool congestion → predicts optimal gas → sets accordingly.</p>
-<h3 id="-slashing-protection"><a class="header" href="#-slashing-protection">🔐 Slashing Protection</a></h3>
+<a class="header" href="AI.html#-slashing-protection" id="-slashing-protection"><h3>🔐 Slashing Protection</h3></a>
 <p>Validator uses inference on peer behavior to detect equivocation or downtime trends.</p>
-<h3 id="-iot-integrated-smart-contracts"><a class="header" href="#-iot-integrated-smart-contracts">🌡 IoT-Integrated Smart Contracts</a></h3>
+<a class="header" href="AI.html#-iot-integrated-smart-contracts" id="-iot-integrated-smart-contracts"><h3>🌡 IoT-Integrated Smart Contracts</h3></a>
 <p>Sensor data (e.g., temperature) processed locally via TinyML → triggers JAM contract if threshold breached.</p>
 <hr />
-<h2 id="-limitations--safety"><a class="header" href="#-limitations--safety">⚠️ Limitations &amp; Safety</a></h2>
+<a class="header" href="AI.html#-limitations--safety" id="-limitations--safety"><h2>⚠️ Limitations &amp; Safety</h2></a>
 <ul>
 <li>❗ Models are non-learning at runtime (inference only)</li>
 <li>❗ AI modules are optional and modular (not consensus-critical)</li>
@@ -252,7 +184,7 @@ env::set_fee(infer::predict_gas_price(inputs));
 <p>AI adds adaptability—but never overrides determinism.</p>
 </blockquote>
 <hr />
-<h2 id="-conclusion"><a class="header" href="#-conclusion">✅ Conclusion</a></h2>
+<a class="header" href="AI.html#-conclusion" id="-conclusion"><h2>✅ Conclusion</h2></a>
 <p>JamLiquor makes blockchain <strong>intelligent at the edge</strong>:</p>
 <ul>
 <li>🔄 Smart contracts adapt</li>
@@ -261,70 +193,59 @@ env::set_fee(infer::predict_gas_price(inputs));
 </ul>
 <p><strong>Inference brings awareness. Awareness brings resilience.</strong></p>
 
-                    </main>
-
-                    <nav class="nav-wrapper" aria-label="Page navigation">
-                        <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="DECENTRALIZATION.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-
-                            <a rel="next prefetch" href="PQC.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-
-                        <div style="clear: both"></div>
-                    </nav>
                 </div>
-            </div>
 
-            <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="DECENTRALIZATION.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                <!-- Mobile navigation buttons -->
+                
+                    <a rel="prev" href="DECENTRALIZATION.html" class="mobile-nav-chapters previous" title="Previous chapter">
                         <i class="fa fa-angle-left"></i>
                     </a>
+                
 
-                    <a rel="next prefetch" href="PQC.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                
+                    <a rel="next" href="PQC.html" class="mobile-nav-chapters next" title="Next chapter">
                         <i class="fa fa-angle-right"></i>
                     </a>
-            </nav>
+                
+
+            </div>
+
+            
+                <a href="DECENTRALIZATION.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="PQC.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script>
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
 
-            window.onbeforeunload = function() {
-                socket.close();
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
             }
         </script>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        
 
+        
 
-        <script>
-            window.playground_copyable = true;
-        </script>
+        
 
+        
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
-
-        <script src="clipboard.min.js"></script>
         <script src="highlight.js"></script>
         <script src="book.js"></script>
 
-        <!-- Custom JS scripts -->
+        <!-- Custom JS script -->
+        
 
-
-    </div>
     </body>
 </html>

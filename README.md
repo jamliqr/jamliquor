@@ -10,11 +10,11 @@
 
 **JamLiquor** is a purpose-driven, cleanroom **JAM Protocol implementation**, engineered from scratch in Rust. It is designed to:
 
-- ✅ **Conform to JAM’s execution model** and participate in the JAM ecosystem
+- ✅ **Conform to JAM's execution model** and participate in the JAM ecosystem
 - ✅ **Run on edge hardware** like Milk-V Duo and Raspberry Pi Zero 2 W
 - ✅ **Support modular innovation**, including AI inference and PQ cryptography
 
-JamLiquor is not a fork. It’s not a derivative. It is a **JAM-native node with radical modularity**.
+JamLiquor is not a fork. It's not a derivative. It is a **JAM-native node with radical modularity**.
 
 ---
 
@@ -42,7 +42,7 @@ Minimalist, auditable, and modular. No unnecessary cryptographic gymnastics.
 
 ---
 
-## 🚀 Goals
+## 🚀 Project Status
 
 | Component          | Description                           | Status          |
 | ------------------ | ------------------------------------- | --------------- |
@@ -53,34 +53,7 @@ Minimalist, auditable, and modular. No unnecessary cryptographic gymnastics.
 | `extensions/ai/`   | TinyML-based inference at edge        | ⚪ Experimental |
 | `extensions/lite/` | 128MB RAM profile w/ minimal overhead | ⚪ Experimental |
 
----
-
-## 📦 Milestone Roadmap
-
-### Milestone 1: **Importer**
-
-- [ ] Block verification and state transitions (JAM spec compliant)
-- [ ] CoreTime & validator judgment ruleset
-
-### Milestone 2: **Authorer**
-
-- [ ] Implement SAFROLE + Ring VRF
-- [ ] Full authoring pipeline with consensus randomness
-
-### Milestone 3: **PolkaVM Integration**
-
-- [ ] PolkaVM (RISC-V) with 64-bit JIT support
-- [ ] JAM-compatible syscall interface
-
-### Milestone 4: **Modular Extensions**
-
-- [ ] Publish `jamliquor-pqc`, `jamliquor-ai`, `jamliquor-lite`
-- [ ] Optional hooks for JAM runtime
-
-### Milestone 5: **Performance Readiness**
-
-- [ ] JAM block throughput on 256MB RAM
-- [ ] 6s block time + 18s finality on edge hardware
+For detailed roadmap, milestones, and technical specifications, see our [Milestone Documentation](./docs/src/MILESTONE.md).
 
 ---
 
@@ -137,13 +110,13 @@ Licensed under **GPL-3.0**. Cleanroom declarations and IP policy documented in [
 JamLiquor is a JAM client with purpose.  
 Compliant by design. Modular by philosophy. Edge-ready by default.
 
-**We don’t fork the future. We build it.**
+**We don't fork the future. We build it.**
 
 🧪 Disclaimer: A Dream Under Construction
 
 JamLiquor is a bold claim. It reads like an engineering utopia. Many may see it as naïve or speculative.
 
-And they’re not wrong.
+And they're not wrong.
 
 This work is:
 
@@ -167,11 +140,11 @@ JamLiquor is:
 
 > **⚠ Warning**
 >
-> We don’t promise it will work tomorrow. But we are building it every day to make it work.
+> We don't promise it will work tomorrow. But we are building it every day to make it work.
 >
 > - **If it works**: the credit belongs to _everyone who dared_ to try.
-> - **If it fails**: we’ll have _learned more_ than most systems ever attempt.
+> - **If it fails**: we'll have _learned more_ than most systems ever attempt.
 >
-> This is not just software. It’s a belief in what’s possible.
+> This is not just software. It's a belief in what's possible.
 
-🤝 **Welcome to JamLiquor. Let’s tinker toward something impossible.**
+🤝 **Welcome to JamLiquor. Let's tinker toward something impossible.**

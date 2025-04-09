@@ -6,14 +6,13 @@
     - [Cleanroom Policy](CLEANROOM.md)
     - [Milestones & Roadmap](MILESTONE.md)
 
-- [🧭 Core Principles](ARCHITECTURE.md)
+- [🧭 Core Principles & Architecture](ARCHITECTURE.md)
     - [1. Lightweight by Design](EDGE.md)
     - [2. Real Decentralization](DECENTRALIZATION.md)
     - [3. Adaptability Through Inference](AI.md)
     - [4. Quantum Resistance](PQC.md)
-    - [5. Simplicity is Strength](ARCHITECTURE.md)
+    - [5. Simplicity is Strength](ARCHITECTURE.md#simplicity-is-strength)
 
-- [🛠 Architecture](ARCHITECTURE.md)
 - [🌐 Network](DECENTRALIZATION.md)
 - [🧪 AI Inference](AI.md)
 - [🔐 Post-Quantum Cryptography](PQC.md)

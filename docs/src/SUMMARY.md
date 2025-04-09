@@ -6,7 +6,7 @@
     - [Cleanroom Policy](CLEANROOM.md)
     - [Milestones & Roadmap](MILESTONE.md)
 
-- [🧭 Core Principles](index.md)
+- [🧭 Core Principles](ARCHITECTURE.md)
     - [1. Lightweight by Design](EDGE.md)
     - [2. Real Decentralization](DECENTRALIZATION.md)
     - [3. Adaptability Through Inference](AI.md)

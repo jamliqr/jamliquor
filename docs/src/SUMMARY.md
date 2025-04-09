@@ -13,7 +13,7 @@
     - [4. Quantum Resistance](PQC.md)
     - [5. Simplicity is Strength](ARCHITECTURE.md#simplicity-is-strength)
 
-- [🌐 Network](DECENTRALIZATION.md)
+- [🌐 Network Architecture](NETWORK.md)
 - [🧪 AI Inference](AI.md)
 - [🔐 Post-Quantum Cryptography](PQC.md)
 - [🚀 Development Roadmap](MILESTONE.md)

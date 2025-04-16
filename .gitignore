@@ -33,6 +33,7 @@ docs/book/**/*
 
 # Environment variables
 .env
+.env.example
 
 # Added by Claude Task Master
 # Logs

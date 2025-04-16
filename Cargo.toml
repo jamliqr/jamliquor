@@ -1,11 +1,13 @@
 [package]
 name = "jamliquor"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 authors = ["SHA888 <https://github.com/SHA888>"]
+description = "A decentralized blockchain platform with lightweight design and post-quantum cryptography"
 homepage = "https://jamliquor.xyz"
 license = "GPL-3.0"
 repository = "https://github.com/jamliqr/jamliquor.git"
+keywords = ["blockchain", "cryptography", "post-quantum", "decentralized", "edge-computing"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

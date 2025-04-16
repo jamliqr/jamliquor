@@ -29,3 +29,4 @@ Thumbs.db  # Windows thumbnail cache (unlikely here)
 
 # Documentation generated files
 docs/book/
+docs/book/**/*

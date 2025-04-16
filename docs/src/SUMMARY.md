@@ -14,6 +14,4 @@
 - [🌐 Network Architecture](NETWORK.md)
 - [🧪 AI & Machine Learning](AI.md)
 - [🔐 Post-Quantum Cryptography](PQC.md)
-- [🚀 Development Roadmap](MILESTONE.md)
 - [⚠️ Disclaimer](DISCLAIMER.md)
-

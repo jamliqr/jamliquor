@@ -22,7 +22,7 @@ A cleanroom implementation ensures:
 
 ## 🔐 Cleanroom Principles
 1. **No source reuse** from:
-   - Parity’s JAM reference clients
+   - Parity's JAM reference clients
    - Polkadot node source code
    - Any proprietary JAM-related implementation
 
@@ -40,6 +40,90 @@ A cleanroom implementation ensures:
 4. **Contributors declare compliance**:
    - All contributors agree to cleanroom principles
    - PRs involving potentially derivative logic are flagged and reviewed
+
+---
+
+## 🛠️ Development Setup
+1. **Environment Setup**
+   - Install Rust toolchain (1.75.0+)
+   - Configure development tools:
+     ```bash
+     rustup component add clippy rustfmt
+     cargo install cargo-audit cargo-tarpaulin
+     ```
+   - Set up git hooks for pre-commit checks
+
+2. **Code Quality Tools**
+   - Rustfmt for formatting
+   - Clippy for linting
+   - cargo-audit for security
+   - cargo-tarpaulin for coverage
+
+3. **Development Workflow**
+   - Branch naming: `feature/`, `fix/`, `docs/`, `refactor/`
+   - Commit message format: `type(scope): description`
+   - Local testing before PR submission
+
+---
+
+## 👥 Code Review Process
+1. **Pre-Review Checklist**
+   - All tests passing
+   - Documentation updated
+   - Cleanroom compliance verified
+   - No linter warnings
+   - Test coverage maintained
+
+2. **Review Stages**
+   - Initial automated checks
+   - Primary reviewer assessment
+   - Secondary reviewer for core changes
+   - Final cleanroom compliance check
+
+3. **Review Focus Areas**
+   - Code correctness
+   - Performance implications
+   - Security considerations
+   - Documentation quality
+   - Test coverage
+   - Cleanroom compliance
+
+4. **Approval Requirements**
+   - Two approving reviews
+   - All CI checks passing
+   - No unresolved comments
+   - Cleanroom compliance confirmed
+
+---
+
+## 🔄 Release Protocols
+1. **Pre-Release Phase**
+   - Version bump PR
+   - Changelog update
+   - Documentation review
+   - Full test suite execution
+   - Security audit completion
+
+2. **Release Process**
+   - Create release branch
+   - Run release test suite
+   - Generate release artifacts
+   - Sign release binaries
+   - Update documentation
+   - Tag release commit
+
+3. **Post-Release**
+   - Deploy to staging
+   - Verify deployment
+   - Monitor for issues
+   - Update production
+   - Announce release
+
+4. **Security Protocols**
+   - Regular security audits
+   - Vulnerability reporting
+   - Emergency patch process
+   - CVE tracking
 
 ---
 
@@ -61,10 +145,9 @@ We welcome external audits, JAM Prize assessments, and community reviews to vali
 ---
 
 ## 📬 Questions or Concerns?
-If you believe any part of JamLiquor’s code violates cleanroom policy, please open a GitHub issue or contact us directly. Transparency is essential to our mission.
+If you believe any part of JamLiquor's code violates cleanroom policy, please open a GitHub issue or contact us directly. Transparency is essential to our mission.
 
 ---
 
-**JamLiquor is built with principles.**  
+**JamLiquor is built with principles.**
 **A JAM client for the ecosystem—not apart from it.**
-

@@ -1,4 +1,4 @@
-use crate::schema::{Block, Header, Extrinsic, State};
+use crate::schema::{Block, Extrinsic, Header, State};
 use anyhow::Result;
 use std::fs::File;
 use std::path::Path;
@@ -18,6 +18,7 @@ impl Importer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_initial_state(&mut self, last_hash: [u8; 32], last_root: [u8; 32]) {
         self.last_block_hash = Some(last_hash);
         self.last_state_root = Some(last_root);
@@ -53,7 +54,7 @@ impl Importer {
                 return Err(anyhow::anyhow!("Parent state root mismatch"));
             }
         }
-        let entropy_source = header.validate_entropy()?;
+        let _entropy_source = header.validate_entropy()?;
         if let Some(epoch_mark) = &header.epoch_mark {
             if header.author_index as usize >= epoch_mark.validators.len() {
                 return Err(anyhow::anyhow!(

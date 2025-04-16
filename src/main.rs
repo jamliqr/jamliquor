@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<()> {
     let mut importer = Importer::new();
-    let block_path = PathBuf::from("../../kd/jamtestvectors/codec/data/block.json");
+    let block_path = PathBuf::from("tests/data/block.json");
     let block = importer.import_block(&block_path)?;
     println!("Block: {:?}", block);
     println!("State: {:?}", importer.state());
@@ -37,7 +37,7 @@ mod tests {
             ], // parent_state_root
         );
 
-        let block_path = PathBuf::from("../../kd/jamtestvectors/codec/data/block.json");
+        let block_path = PathBuf::from("tests/data/block.json");
         let block = importer.import_block(&block_path)?;
 
         // Verify the block was imported successfully
@@ -46,7 +46,7 @@ mod tests {
 
         // Get ticket stats
         let (total_tickets, valid_tickets, invalid_tickets) = importer.state().get_ticket_stats();
-        
+
         // Verify ticket counts
         if let Some(tickets_mark) = &block.header.tickets_mark {
             assert_eq!(

@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct State {
-    last_slot: u64,    // Tracks last processed slot
-    counter: u64,      // Total valid tickets and preimages
+    last_slot: u64, // Tracks last processed slot
+    counter: u64,   // Total valid tickets and preimages
     ticket_state: TicketState,
 }
 
@@ -25,7 +25,11 @@ impl TicketState {
         }
     }
 
-    pub fn apply_tickets(&mut self, tickets: &[TicketEnvelope], tickets_mark: &[TicketBody]) -> Result<(), anyhow::Error> {
+    pub fn apply_tickets(
+        &mut self,
+        tickets: &[TicketEnvelope],
+        tickets_mark: &[TicketBody],
+    ) -> Result<(), anyhow::Error> {
         // Validate ticket counts match
         if tickets.len() != tickets_mark.len() {
             return Err(anyhow::anyhow!(
@@ -47,7 +51,7 @@ impl TicketState {
             }
 
             // Validate ticket
-            if let Err(_) = ticket.validate() {
+            if ticket.validate().is_err() {
                 self.invalid_tickets += 1;
                 continue;
             }
@@ -60,6 +64,7 @@ impl TicketState {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn get_stats(&self) -> (u64, u64, u64) {
         (self.total_tickets, self.valid_tickets, self.invalid_tickets)
     }
@@ -78,10 +83,12 @@ impl State {
         self.last_slot
     }
 
+    #[allow(dead_code)]
     pub fn get_counter(&self) -> u64 {
         self.counter
     }
 
+    #[allow(dead_code)]
     pub fn get_ticket_stats(&self) -> (u64, u64, u64) {
         self.ticket_state.get_stats()
     }
@@ -92,7 +99,8 @@ impl State {
 
         // Process tickets if tickets_mark exists
         if let Some(tickets_mark) = &block.header.tickets_mark {
-            self.ticket_state.apply_tickets(&block.extrinsic.tickets, tickets_mark)?;
+            self.ticket_state
+                .apply_tickets(&block.extrinsic.tickets, tickets_mark)?;
         }
 
         // Count valid preimages (non-empty blob)
@@ -176,6 +184,7 @@ pub struct TicketBody {
 }
 
 impl TicketBody {
+    #[allow(dead_code)]
     pub fn validate(&self) -> Result<(), anyhow::Error> {
         // No validation needed for attempt since u8 already enforces 0-255 range
         Ok(())
@@ -258,7 +267,7 @@ mod hex_vec {
 
 // Constants for entropy validation
 const ENTROPY_SOURCE_SIZE: usize = 96; // Total entropy source size
-const ENTROPY_CHUNK_SIZE: usize = 32;  // Size of each entropy value
+const ENTROPY_CHUNK_SIZE: usize = 32; // Size of each entropy value
 
 #[derive(Debug)]
 pub struct EntropySource {
@@ -282,8 +291,8 @@ impl EntropySource {
         let mut final_entropy = [0u8; ENTROPY_CHUNK_SIZE];
 
         current_entropy.copy_from_slice(&bytes[0..ENTROPY_CHUNK_SIZE]);
-        next_entropy.copy_from_slice(&bytes[ENTROPY_CHUNK_SIZE..2*ENTROPY_CHUNK_SIZE]);
-        final_entropy.copy_from_slice(&bytes[2*ENTROPY_CHUNK_SIZE..]);
+        next_entropy.copy_from_slice(&bytes[ENTROPY_CHUNK_SIZE..2 * ENTROPY_CHUNK_SIZE]);
+        final_entropy.copy_from_slice(&bytes[2 * ENTROPY_CHUNK_SIZE..]);
 
         Ok(Self {
             current_entropy,
@@ -295,20 +304,25 @@ impl EntropySource {
     pub fn validate_with_epoch_mark(&self, epoch_mark: &EpochMark) -> Result<(), anyhow::Error> {
         // In JAM protocol, the current entropy should match the epoch mark entropy
         if self.current_entropy != *epoch_mark.entropy.as_bytes() {
-            return Err(anyhow::anyhow!("Current entropy mismatch with epoch mark entropy"));
+            return Err(anyhow::anyhow!(
+                "Current entropy mismatch with epoch mark entropy"
+            ));
         }
 
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn get_current_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
         &self.current_entropy
     }
 
+    #[allow(dead_code)]
     pub fn get_next_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
         &self.next_entropy
     }
 
+    #[allow(dead_code)]
     pub fn get_final_entropy(&self) -> &[u8; ENTROPY_CHUNK_SIZE] {
         &self.final_entropy
     }
@@ -364,7 +378,9 @@ mod tests {
             tickets_entropy: OpaqueHash([5u8; 32]),
             validators: vec![],
         };
-        assert!(entropy_source.validate_with_epoch_mark(&invalid_epoch_mark).is_err());
+        assert!(entropy_source
+            .validate_with_epoch_mark(&invalid_epoch_mark)
+            .is_err());
 
         Ok(())
     }

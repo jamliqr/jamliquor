@@ -9,7 +9,7 @@
 - [🧭 Core Principles & Architecture](ARCHITECTURE.md)
     - [1. Lightweight by Design](EDGE.md)
     - [2. Real Decentralization](DECENTRALIZATION.md)
-    - [3. Simplicity is Strength](ARCHITECTURE.md#principle-simplicity-is-strength)
+    - [3. Simplicity is Strength](ARCHITECTURE.md)
 
 - [🌐 Network Architecture](NETWORK.md)
 - [🧪 AI & Machine Learning](AI.md)

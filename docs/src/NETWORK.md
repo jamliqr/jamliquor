@@ -1,5 +1,30 @@
 # 🌐 Network Architecture
 
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Overview](#overview)
+- [Core Components](#core-components)
+  - [P2P Network Layer](#1-p2p-network-layer)
+  - [Protocol Handlers](#2-protocol-handlers)
+  - [Network Security](#3-network-security)
+- [Network Protocols](#network-protocols)
+  - [Block Propagation](#block-propagation)
+  - [Transaction Gossip](#transaction-gossip)
+  - [State Sync](#state-sync)
+- [Configuration](#configuration)
+  - [Network Parameters](#network-parameters)
+  - [Bootstrap Nodes](#bootstrap-nodes)
+- [Network Optimization](#network-optimization)
+  - [Performance Tuning](#performance-tuning)
+  - [Resource Management](#resource-management)
+- [Monitoring & Metrics](#monitoring--metrics)
+  - [Network Health](#network-health)
+  - [Diagnostics](#diagnostics)
+- [Future Improvements](#future-improvements)
+  - [Planned Enhancements](#planned-enhancements)
+  - [Research Areas](#research-areas)
+
 ## Overview
 JamLiquor implements a peer-to-peer network architecture optimized for JAM Protocol communication. This document outlines the network stack, protocols, and design decisions.
 
@@ -116,3 +141,8 @@ nodes = [
 - Advanced peer selection
 - Improved block propagation
 - Enhanced security measures
+
+---
+
+**Navigation**
+Previous: [Architecture Overview](./ARCHITECTURE.md) | Next: [AI & Machine Learning](./AI.md)

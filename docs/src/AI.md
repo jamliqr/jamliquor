@@ -1,3 +1,15 @@
+# 🧪 AI & Machine Learning
+
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Overview](#overview)
+- [Core AI Features](#core-ai-features)
+- [Implementation Details](#implementation-details)
+- [Performance Considerations](#performance-considerations)
+- [Security Measures](#security-measures)
+- [Future Enhancements](#future-enhancements)
+
 # 🤖 AI.md — Adaptability Through Inference
 
 ## 🔁 Principle: Adaptability Through Inference
@@ -102,3 +114,13 @@ JamLiquor makes blockchain **intelligent at the edge**:
 - ⚡ Efficiency increases
 
 **Inference brings awareness. Awareness brings resilience.**
+
+---
+
+**Navigation**
+Previous: [Network Architecture](./NETWORK.md) | Next: [Post-Quantum Cryptography](./PQC.md)
+
+**Related Topics**
+- [Performance Tuning](./NETWORK.md#performance-tuning)
+- [Resource Management](./NETWORK.md#resource-management)
+- [Development Guidelines](./CLEANROOM.md#-development-setup)

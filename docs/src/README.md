@@ -1,5 +1,25 @@
 # JamLiquor
 
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Quick Start](#-quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#-usage)
+  - [Basic Usage](#basic-usage)
+  - [Configuration](#configuration)
+- [Architecture](#-architecture)
+- [Development](#-development)
+  - [Setting Up Development Environment](#setting-up-development-environment)
+  - [Running Tests](#running-tests)
+  - [Code Style](#code-style)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Additional Resources](#-additional-resources)
+- [Troubleshooting](#-troubleshooting)
+  - [Common Issues](#common-issues)
+
 JamLiquor is a post-quantum secure, cleanroom implementation of the JAM Protocol runtime environment, designed for efficient and verifiable execution of JAM-compatible code.
 
 ## 🚀 Quick Start
@@ -149,3 +169,8 @@ JamLiquor is licensed under GPL-3.0. See [LICENSE](../LICENSE) for details.
    - Ensure bootstrap nodes are accessible
 
 For more help, please [open an issue](https://github.com/yourusername/jamliquor/issues).
+
+---
+
+**Navigation**
+Previous: [Documentation Home](./index.md) | Next: [Project Manifesto](./MANIFESTO.md)

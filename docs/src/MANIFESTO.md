@@ -1,6 +1,22 @@
+# 📜 Project Manifesto
+
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Vision](#vision)
+- [Core Principles](#core-principles)
+  - [Post-Quantum Security](#1-post-quantum-security)
+  - [Verifiable Execution](#2-verifiable-execution)
+  - [Performance and Efficiency](#3-performance-and-efficiency)
+  - [Compatibility and Standards](#4-compatibility-and-standards)
+- [Roadmap](#roadmap)
+- [Community Guidelines](#community-guidelines)
+- [Governance Model](#governance-model)
+- [Success Metrics](#success-metrics)
+
 # **The JamLiquor Manifesto: A Purpose-Driven JAM Client**
 
-Version 0.1.0 | March 2025  
+Version 0.1.0 | March 2025
 
 Drafted by: [Kresna Sucandra, MD](https://github.com/SHA888)
 
@@ -13,7 +29,7 @@ JamLiquor is a cleanroom, purpose-built client for the **JAM Protocol**. It embo
 1. **Lightweight**: It must run on edge devices, not just cloud infrastructure.
 2. **Decentralized**: It empowers everyone, not just validators with datacenters.
 3. **Adaptive**: It leverages AI to understand and respond to changing network conditions.
-4. **Quantum-Resistant**: It prepares for tomorrow’s threats today.
+4. **Quantum-Resistant**: It prepares for tomorrow's threats today.
 5. **Simple**: It is auditable, comprehensible, and intentionally minimal.
 
 JamLiquor is not a blockchain project with JAM inside—it is **JAM through and through**, extended only by modular, non-invasive innovation.
@@ -31,10 +47,10 @@ But the truth is simple:
 
 > ⚠️ A blockchain that _cannot_ run on **a $10 board** is a **failed experiment in decentralization**.
 
-JamLiquor **restores balance** by being lean enough to run on **edge devices, IoT hardware, and personal hardware anywhere**. True decentralization isn’t in data centers—it belongs **everywhere**.
+JamLiquor **restores balance** by being lean enough to run on **edge devices, IoT hardware, and personal hardware anywhere**. True decentralization isn't in data centers—it belongs **everywhere**.
 
 ### **The Rise of Adaptive Infrastructure**
-Blockchains shouldn’t be blind to the world around them. JamLiquor integrates:
+Blockchains shouldn't be blind to the world around them. JamLiquor integrates:
 - **AI inference** to tune performance and security
 - **Context-awareness** to monitor and respond to network conditions
 - **Autonomous intelligence** to simplify validator and system maintenance
@@ -42,7 +58,7 @@ Blockchains shouldn’t be blind to the world around them. JamLiquor integrates:
 Blockchains must evolve—or be outpaced.
 
 ### **The Quantum Threat**
-Assumptions that power today's cryptography—**ECDSA, sr25519, RSA**—will be broken in tomorrow’s quantum age.
+Assumptions that power today's cryptography—**ECDSA, sr25519, RSA**—will be broken in tomorrow's quantum age.
 
 JamLiquor acts now:
 - Uses **Dilithium, Kyber, and XMSS** via modular interfaces
@@ -66,7 +82,7 @@ Minimalism is not regression—it is **resilience**.
 ## **⚡ The JamLiquor Principles**
 
 ### **1. Lightweight by Design**
-If your blockchain needs a server farm, it isn’t decentralized. JamLiquor is:
+If your blockchain needs a server farm, it isn't decentralized. JamLiquor is:
 - Built for <128MB RAM devices
 - Targeted for RISC-V edge hardware
 - Performance-aware at compile time
@@ -146,10 +162,22 @@ JamLiquor is how we get there.
 
 JamLiquor is more than a JAM client. It is a statement of belief:
 
-That decentralization must be simple.  
-That security must be future-proof.  
-That intelligence must be built-in.  
+That decentralization must be simple.
+That security must be future-proof.
+That intelligence must be built-in.
 That access must be universal.
 
 This is the JAM client we deserve. This is JamLiquor.
 
+## Version: 0.1.0-alpha
+Last Updated: [Current Date]
+
+---
+
+**Navigation**
+Previous: [Quick Start Guide](./README.md) | Next: [Cleanroom Policy](./CLEANROOM.md)
+
+**Related Topics**
+- [Post-Quantum Implementation](./PQC.md)
+- [Network Architecture](./NETWORK.md)
+- [Development Guidelines](./CLEANROOM.md#-development-setup)

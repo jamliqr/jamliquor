@@ -1,8 +1,19 @@
-# 🔐 PQC.md — Quantum Resistance is Non-Negotiable
+# 🔐 Post-Quantum Cryptography
+
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Overview](#overview)
+- [Cryptographic Primitives](#cryptographic-primitives)
+- [Implementation Details](#implementation-details)
+- [Security Analysis](#security-analysis)
+- [Performance Impact](#performance-impact)
+- [Migration Strategy](#migration-strategy)
+- [Future Considerations](#future-considerations)
 
 ## 🛡️ Principle: Quantum Resistance is Non-Negotiable
 
-> The cryptography of today won’t survive the quantum world of tomorrow.
+> The cryptography of today won't survive the quantum world of tomorrow.
 
 JamLiquor integrates post-quantum cryptography (PQC) by design—not as a patch, but as a core modular extension that keeps the network resilient into the 2030s and beyond.
 
@@ -11,7 +22,7 @@ This document outlines how PQC works in JamLiquor, and how it can be adopted wit
 ---
 
 ## ⚠️ The Threat of Quantum Computing
-Algorithms like **Shor’s** and **Grover’s** could soon break:
+Algorithms like **Shor's** and **Grover's** could soon break:
 - RSA, ECDSA
 - sr25519 (used in most Substrate-based chains)
 - BLS and SNARK-based crypto
@@ -33,7 +44,7 @@ JamLiquor uses modular PQC extensions:
 
 ### 2. **Kyber** (optional key exchange)
 - Module for encrypted messaging or shared secrets
-- JAM doesn’t require this, but future parachains might
+- JAM doesn't require this, but future parachains might
 
 ### 3. **XMSS (Hash-Based)**
 - Stateless variant for resource-constrained validators
@@ -48,7 +59,7 @@ JamLiquor uses modular PQC extensions:
 - Work Reports, validator judgments, and transaction signers can toggle PQ or classical modes
 - On-chain verifiers are optimized for batch validation
 
-> JAM’s modular signature layers make it ideal for cryptographic flexibility.
+> JAM's modular signature layers make it ideal for cryptographic flexibility.
 
 ---
 
@@ -90,9 +101,18 @@ Performance:
 ---
 
 ## ✅ Summary
-Quantum attacks are not theoretical—they’re **inevitable**.
+Quantum attacks are not theoretical—they're **inevitable**.
 
-JamLiquor doesn’t wait for catastrophe. It makes PQC **native**, **modular**, and **future-safe**.
+JamLiquor doesn't wait for catastrophe. It makes PQC **native**, **modular**, and **future-safe**.
 
 **Security delayed is security denied.**
 
+---
+
+**Navigation**
+Previous: [AI & Machine Learning](./AI.md) | Next: [Disclaimer](./DISCLAIMER.md)
+
+**Related Topics**
+- [Network Security](./NETWORK.md#3-network-security)
+- [Security Guidelines](./CLEANROOM.md#-security-protocols)
+- [Core Principles](./MANIFESTO.md#core-principles)

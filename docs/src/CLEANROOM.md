@@ -1,5 +1,18 @@
 # 🧪 Cleanroom Policy for JamLiquor
 
+[← Back to Index](./index.md)
+
+## Table of Contents
+- [Overview](#overview)
+- [What Cleanroom Means in JamLiquor](#-what-cleanroom-means-in-jamliquor)
+- [Cleanroom Principles](#-cleanroom-principles)
+- [Development Setup](#-development-setup)
+- [Code Review Process](#-code-review-process)
+- [Release Protocols](#-release-protocols)
+- [Documentation Trail](#-documentation-trail)
+- [License & Legal](#-license--legal)
+- [Questions or Concerns](#-questions-or-concerns)
+
 ## Overview
 JamLiquor is a **cleanroom Rust implementation** of the JAM Protocol. It has been built from scratch to ensure:
 
@@ -151,3 +164,8 @@ If you believe any part of JamLiquor's code violates cleanroom policy, please op
 
 **JamLiquor is built with principles.**
 **A JAM client for the ecosystem—not apart from it.**
+
+---
+
+**Navigation**
+Previous: [Project Manifesto](./MANIFESTO.md) | Next: [Milestones & Roadmap](./MILESTONE.md)

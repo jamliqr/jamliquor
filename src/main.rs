@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<()> {
     let mut importer = Importer::new();
-    let block_path = PathBuf::from("tests/data/block.json");
+    let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
     let block = importer.import_block(&block_path)?;
     println!("Block: {:?}", block);
     println!("State: {:?}", importer.state());
@@ -37,7 +37,7 @@ mod tests {
             ], // parent_state_root
         );
 
-        let block_path = PathBuf::from("tests/data/block.json");
+        let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
         let block = importer.import_block(&block_path)?;
 
         // Verify the block was imported successfully

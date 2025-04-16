@@ -26,3 +26,6 @@
 # Linux/macOS cruft
 .DS_Store  # macOS Finder files (if shared with macOS users)
 Thumbs.db  # Windows thumbnail cache (unlikely here)
+
+# Documentation generated files
+docs/book/

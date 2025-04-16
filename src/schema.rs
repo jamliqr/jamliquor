@@ -1,28 +1,24 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct State {
-    last_slot: u64, // Tracks last processed slot
-    counter: u64,   // Total valid tickets and preimages
-    ticket_state: TicketState,
+    pub last_slot: u64, // Tracks last processed slot
+    pub counter: u64,   // Total valid tickets and preimages
+    pub ticket_state: TicketState,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct TicketState {
-    total_tickets: u64,
-    valid_tickets: u64,
-    invalid_tickets: u64,
-    last_ticket_id: Option<OpaqueHash>,
+    pub total_tickets: u64,
+    pub valid_tickets: u64,
+    pub invalid_tickets: u64,
+    pub last_ticket_id: Option<OpaqueHash>,
 }
 
 impl TicketState {
+    #[allow(dead_code)]
     pub fn new() -> Self {
-        Self {
-            total_tickets: 0,
-            valid_tickets: 0,
-            invalid_tickets: 0,
-            last_ticket_id: None,
-        }
+        Self::default()
     }
 
     pub fn apply_tickets(
@@ -71,12 +67,9 @@ impl TicketState {
 }
 
 impl State {
+    #[allow(dead_code)]
     pub fn new() -> Self {
-        State {
-            last_slot: 0,
-            counter: 0,
-            ticket_state: TicketState::new(),
-        }
+        Self::default()
     }
 
     pub fn get_last_slot(&self) -> u64 {

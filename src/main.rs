@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn test_cli_defaults() {
-        let default_path = PathBuf::from("tests/vectors/codec/data/block.json");
+        let default_path = std::env::current_dir().unwrap().join("tests/vectors/codec/data/block.json");
         assert!(default_path.exists(), "Default block vector should exist");
     }
 

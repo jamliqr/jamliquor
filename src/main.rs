@@ -1,23 +1,64 @@
 mod importer;
 mod schema;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
+use clap::Parser;
 use importer::Importer;
+use log::info;
 use std::path::PathBuf;
 
+/// JamLiquor CLI for blockchain block importing
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    /// Path to the block JSON file
+    #[arg(short, long, default_value = "tests/vectors/codec/data/block.json")]
+    block_path: PathBuf,
+
+    /// Enable verbose logging
+    #[arg(short, long)]
+    verbose: bool,
+}
+
+fn setup_logging(verbose: bool) {
+    let log_level = if verbose {
+        log::LevelFilter::Debug
+    } else {
+        log::LevelFilter::Info
+    };
+    env_logger::Builder::new().filter_level(log_level).init();
+}
+
 fn main() -> Result<()> {
+    let cli = Cli::parse();
+    setup_logging(cli.verbose);
+
     let mut importer = Importer::new();
-    let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
-    let block = importer.import_block(&block_path)?;
-    println!("Block: {:?}", block);
-    println!("State: {:?}", importer.state());
+    let block = importer
+        .import_block(&cli.block_path)
+        .with_context(|| format!("Failed to import block from {}", cli.block_path.display()))?;
+
+    info!("Successfully imported block: {:?}", block);
+    info!("Importer state: {:?}", importer.state());
+
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
+
+    #[test]
+    fn test_cli_defaults() {
+        let default_path = PathBuf::from("tests/vectors/codec/data/block.json");
+        assert!(default_path.exists(), "Default block vector should exist");
+    }
+
+    #[test]
+    fn test_importer_initialization() {
+        let importer = Importer::new();
+        // TODO: Add appropriate state initialization check
+    }
 
     #[test]
     fn test_block_import() -> Result<()> {

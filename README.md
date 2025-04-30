@@ -1,8 +1,10 @@
-# JamLiquor: A Cleanroom JAM Client with Edge, AI, and PQC Extensions
+# JamLiquor
 
-### _Lightweight. Adaptive. Quantum-Resistant. JAM-native._
+#### **A Cleanroom JAM Client with Edge, AI, and PQC Extensions**
 
-![License](https://img.shields.io/badge/license-GPL_3.0-blue.svg) ![Language](https://img.shields.io/badge/language-Rust-orange.svg) ![Status](https://img.shields.io/badge/status-Experimental-lightgrey)
+_Lightweight. Adaptive. Quantum-Resistant. JAM-native._
+
+![License](https://img.shields.io/badge/license-GPL_3.0-blue.svg) ![Language](https://img.shields.io/badge/language-Rust-orange.svg) [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/jamliqr/e21c2f06f08f5795f50860fcbbbeb1f3/raw/jamliquor-coverage.json)](https://github.com/jamliqr/jamliquor/actions) ![Status](https://img.shields.io/badge/status-Experimental-lightgrey)
 
 ---
 

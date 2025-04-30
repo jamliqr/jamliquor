@@ -1,0 +1,48 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    
+    - name: Install cargo-tarpaulin
+      run: cargo install cargo-tarpaulin
+    
+    - name: Run tarpaulin
+      run: |
+        cargo tarpaulin --verbose --out Xml
+        COVERAGE=$(grep -oP 'Coverage: \K[0-9.]+' tarpaulin-report.txt)
+        echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+    
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./cobertura.xml
+    
+    - name: Update Coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.6.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: e21c2f06f08f5795f50860fcbbbeb1f3
+        filename: jamliquor-coverage.json
+        label: coverage
+        message: ${{ env.COVERAGE }}%
+        color: ${{ 
+          env.COVERAGE >= 80 && 'brightgreen' || 
+          env.COVERAGE >= 60 && 'green' || 
+          env.COVERAGE >= 40 && 'yellow' || 
+          'red' 
+        }}

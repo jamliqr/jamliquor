@@ -1,4 +1,37 @@
+use log::error;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+/// Comprehensive error types for JAM blockchain operations
+#[derive(Error, Debug)]
+pub enum BlockchainError {
+    /// Slot validation failed
+    #[error("Invalid slot: expected > {last_slot}, got {current_slot}")]
+    InvalidSlot { last_slot: u64, current_slot: u64 },
+
+    /// Parent hash validation failed
+    #[error("Parent hash mismatch: expected {expected}, got {actual}")]
+    ParentHashMismatch { expected: String, actual: String },
+
+    /// Ticket validation failed
+    #[error("Ticket validation error: {reason}")]
+    TicketValidationError { reason: String },
+
+    /// State transition error
+    #[error("State transition failed: {reason}")]
+    StateTransitionError { reason: String },
+
+    /// Invalid author index in block header
+    #[error("Invalid author index: {author_index} out of bounds (max {max_validators})")]
+    InvalidAuthorIndex {
+        author_index: u64,
+        max_validators: usize,
+    },
+
+    /// Parent state root mismatch
+    #[error("Parent state root mismatch: expected {expected}, got {actual}")]
+    ParentStateRootMismatch { expected: String, actual: String },
+}
 
 #[derive(Debug, Default)]
 pub struct State {
@@ -114,8 +147,19 @@ impl State {
 pub struct OpaqueHash(#[serde(with = "hex")] [u8; 32]);
 
 impl OpaqueHash {
+    /// Get the inner byte array
     pub fn as_bytes(&self) -> &[u8; 32] {
         &self.0
+    }
+
+    /// Create a new OpaqueHash from a byte array
+    pub fn new(bytes: [u8; 32]) -> Self {
+        OpaqueHash(bytes)
+    }
+
+    /// Check if the hash is empty (all zeros)
+    pub fn is_empty(&self) -> bool {
+        self.0.iter().all(|&x| x == 0)
     }
 }
 

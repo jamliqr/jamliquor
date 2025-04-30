@@ -19,6 +19,7 @@
 - [🔐 Post-Quantum Cryptography](PQC.md)
 
 ## Developer Resources
+- [🧪 Test Vector Conformation](CONFORMATION.md)
 - [🛠️ Development Setup](CLEANROOM.md#-development-setup)
 - [👥 Code Review Process](CLEANROOM.md#-code-review-process)
 - [🔄 Release Protocols](CLEANROOM.md#-release-protocols)

@@ -14,7 +14,7 @@
           "id": 1,
           "title": "Initialize Rust project with cargo and version configuration",
           "description": "Create the base JamLiquor project structure with proper Rust version pinning and initial configuration files",
-          "status": "pending",
+          "status": "done",
           "dependencies": [],
           "details": "Run `cargo init --name jamliquor` to create the project. Add a `rust-toolchain.toml` file to specify Rust 1.70+ as the required version. Create a `.gitignore` file with appropriate Rust patterns. Initialize Git repository with `git init` and make an initial commit. Add a basic README.md with project overview and development approach documentation. Set up GitHub Actions for CI with a basic workflow file that runs tests and checks formatting."
         },
@@ -22,7 +22,7 @@
           "id": 2,
           "title": "Establish core module structure and dependency management",
           "description": "Define the initial module structure for the project and add essential dependencies",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             1
           ],
@@ -32,7 +32,7 @@
           "id": 3,
           "title": "Configure build targets for RISC-V and ARM architectures",
           "description": "Set up cross-compilation support for target architectures",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             2
           ],
@@ -42,7 +42,7 @@
           "id": 4,
           "title": "Implement testing framework and initial tests",
           "description": "Set up comprehensive testing infrastructure for the project",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             2
           ],

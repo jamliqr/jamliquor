@@ -11,25 +11,25 @@ Create a new Rust project with cargo, set up the recommended Rust version (1.70+
 Verify project builds successfully on different target platforms. Ensure all module interfaces are properly defined. Create unit tests for basic architectural components.
 
 # Subtasks:
-## 1. Initialize Rust project with cargo and version configuration [pending]
+## 1. Initialize Rust project with cargo and version configuration [done]
 ### Dependencies: None
 ### Description: Create the base JamLiquor project structure with proper Rust version pinning and initial configuration files
 ### Details:
 Run `cargo init --name jamliquor` to create the project. Add a `rust-toolchain.toml` file to specify Rust 1.70+ as the required version. Create a `.gitignore` file with appropriate Rust patterns. Initialize Git repository with `git init` and make an initial commit. Add a basic README.md with project overview and development approach documentation. Set up GitHub Actions for CI with a basic workflow file that runs tests and checks formatting.
 
-## 2. Establish core module structure and dependency management [pending]
+## 2. Establish core module structure and dependency management [done]
 ### Dependencies: 1.1
 ### Description: Define the initial module structure for the project and add essential dependencies
 ### Details:
 Create the initial module structure in `src/` with placeholder files for core components: `importer.rs`, `authorer.rs`, `polkavm_backend.rs`, and `extensions.rs`. Create a basic `lib.rs` that exports these modules. Update Cargo.toml with essential dependencies including: polkavm (for VM integration), clap (for CLI), serde (for serialization), and appropriate testing frameworks. Document the module structure in the README.md. Set up feature flags for optional components.
 
-## 3. Configure build targets for RISC-V and ARM architectures [pending]
+## 3. Configure build targets for RISC-V and ARM architectures [done]
 ### Dependencies: 1.2
 ### Description: Set up cross-compilation support for target architectures
 ### Details:
 Create a `.cargo/config.toml` file to define build targets for RISC-V and ARM. Add cross-compilation tools as dev-dependencies. Document the build process for each target architecture. Create build scripts if needed for platform-specific configurations. Test the build process for each target to ensure it works correctly. Add CI steps to verify cross-compilation. Document any platform-specific considerations in a BUILDING.md file.
 
-## 4. Implement testing framework and initial tests [pending]
+## 4. Implement testing framework and initial tests [done]
 ### Dependencies: 1.2
 ### Description: Set up comprehensive testing infrastructure for the project
 ### Details:

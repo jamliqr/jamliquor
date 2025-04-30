@@ -3,7 +3,7 @@ name = "jamliquor"
 version = "0.1.0"
 edition = "2021"
 authors = ["SHA888 <https://github.com/SHA888>"]
-description = "A decentralized blockchain platform with lightweight design and post-quantum cryptography"
+description = "A Cleanroom JAM Client with Edge, AI, and PQC Extensions"
 homepage = "https://jamliquor.xyz"
 license = "GPL-3.0"
 repository = "https://github.com/jamliqr/jamliquor.git"
@@ -11,6 +11,22 @@ keywords = ["blockchain", "cryptography", "post-quantum", "decentralized", "edge
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
+clap = { version = "4.5", features = ["derive"] }
+env_logger = "0.10"
+log = "0.4"
+thiserror = "1.0"
 serde_json = "1.0"
 anyhow = "1.0"
 hex = "0.4"
+tempfile = "3.2"
+proptest = "1.4.0"
+
+[dev-dependencies]
+rstest = "0.8.0"
+anyhow = "1.0.81"
+more-asserts = "0.3"
+criterion = "0.5"
+
+[[bench]]
+name = "core_benchmarks"
+harness = false

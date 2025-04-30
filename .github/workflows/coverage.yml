@@ -36,14 +36,30 @@ jobs:
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         files: lcov.info
         flags: unittests
         name: jamliquor-coverage
-        fail_ci_if_error: true
-        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false
         verbose: true
         env_vars: OS,RUST
         slug: jamliqr/jamliquor
         branch: ${{ github.ref }}
         commit_parent: ${{ github.sha }}
+
+    - name: Debug Codecov Upload
+      if: failure()
+      run: |
+        echo "Listing lcov.info contents:"
+        cat lcov.info
+        echo "\nChecking Codecov upload manually:"
+        curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+        curl -Os https://uploader.codecov.io/latest/linux/codecov
+        curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+        curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+        gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
+        shasum -a 256 -c codecov.SHA256SUM
+        chmod +x codecov
+        ./codecov -f lcov.info -F unittests -Z

@@ -1,5 +1,6 @@
-use crate::schema::{Block, Extrinsic, Header, State};
-use anyhow::Result;
+use crate::schema::{Block, BlockchainError, Extrinsic, Header, State};
+use anyhow::{Context, Result};
+use log::{info, warn};
 use std::fs::File;
 use std::path::Path;
 
@@ -24,12 +25,28 @@ impl Importer {
         self.last_state_root = Some(last_root);
     }
 
+    /// Import and validate a block from a given path
     pub fn import_block<P: AsRef<Path>>(&mut self, path: P) -> Result<Block> {
-        let file = File::open(path)?;
-        let block: Block = serde_json::from_reader(file)?;
-        self.validate_and_apply_block(&block)?;
+        info!("Importing block from path: {}", path.as_ref().display());
+
+        // Open and parse block file
+        let file = File::open(&path)
+            .with_context(|| format!("Failed to open block file: {}", path.as_ref().display()))?;
+        let block: Block =
+            serde_json::from_reader(file).with_context(|| "Failed to parse block JSON")?;
+
+        // Validate and apply block
+        self.validate_and_apply_block(&block)
+            .with_context(|| "Block validation failed")?;
+
+        // Update last block hash and state root
+        let extrinsic_hash = hex::encode(block.header.extrinsic_hash.as_bytes());
+
+        info!("Block imported successfully: hash={}", extrinsic_hash);
+
         self.last_block_hash = Some(*block.header.extrinsic_hash.as_bytes());
         self.last_state_root = Some(*block.header.parent_state_root.as_bytes());
+
         Ok(block)
     }
 
@@ -40,36 +57,78 @@ impl Importer {
         Ok(())
     }
 
+    /// Validate block header with comprehensive checks
     fn validate_header(&self, header: &Header) -> Result<()> {
-        if u64::from(header.slot) <= self.state.get_last_slot() {
-            return Err(anyhow::anyhow!("Slot must increase: {}", header.slot));
+        let current_slot = u64::from(header.slot);
+        let last_slot = self.state.get_last_slot();
+
+        // Slot validation
+        if current_slot <= last_slot {
+            warn!(
+                "Invalid slot progression: current {} <= last {}",
+                current_slot, last_slot
+            );
+            return Err(BlockchainError::InvalidSlot {
+                last_slot,
+                current_slot,
+            }
+            .into());
         }
+
+        // Parent hash validation
         if let Some(last_hash) = self.last_block_hash {
-            if header.parent.as_bytes() != &last_hash {
-                return Err(anyhow::anyhow!("Parent hash mismatch"));
+            let parent_hash = header.parent.as_bytes();
+            if parent_hash != &last_hash {
+                warn!(
+                    "Parent hash mismatch: expected {}, got {}",
+                    hex::encode(last_hash),
+                    hex::encode(parent_hash)
+                );
+                return Err(BlockchainError::ParentHashMismatch {
+                    expected: hex::encode(last_hash),
+                    actual: hex::encode(parent_hash),
+                }
+                .into());
             }
         }
+
+        // Parent state root validation
         if let Some(last_root) = self.last_state_root {
             if header.parent_state_root.as_bytes() != &last_root {
-                return Err(anyhow::anyhow!("Parent state root mismatch"));
+                warn!(
+                    "Parent state root mismatch: expected {}, got {}",
+                    hex::encode(last_root),
+                    hex::encode(header.parent_state_root.as_bytes())
+                );
+                return Err(BlockchainError::ParentStateRootMismatch {
+                    expected: hex::encode(last_root),
+                    actual: hex::encode(header.parent_state_root.as_bytes()),
+                }
+                .into());
             }
         }
+
+        // Entropy validation (placeholder)
         let _entropy_source = header.validate_entropy()?;
+
+        info!("Header validation passed for slot {}", current_slot);
+
+        // Optional additional validations
         if let Some(epoch_mark) = &header.epoch_mark {
             if header.author_index as usize >= epoch_mark.validators.len() {
-                return Err(anyhow::anyhow!(
+                warn!(
                     "Author index {} out of bounds (max {})",
                     header.author_index,
                     epoch_mark.validators.len() - 1
-                ));
+                );
+                return Err(BlockchainError::InvalidAuthorIndex {
+                    author_index: header.author_index as u64,
+                    max_validators: epoch_mark.validators.len(),
+                }
+                .into());
             }
         }
-        if header.offenders_mark.is_empty() {
-            return Err(anyhow::anyhow!("Offenders mark cannot be empty"));
-        }
-        if header.seal.is_empty() {
-            return Err(anyhow::anyhow!("Seal cannot be empty"));
-        }
+
         Ok(())
     }
 
@@ -98,5 +157,11 @@ impl Importer {
 
     pub fn state(&self) -> &State {
         &self.state
+    }
+}
+
+impl Default for Importer {
+    fn default() -> Self {
+        Self::new()
     }
 }

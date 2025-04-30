@@ -3,11 +3,17 @@ mod schema;
 
 use anyhow::Result;
 use importer::Importer;
-use std::path::PathBuf;
 
 fn main() -> Result<()> {
     let mut importer = Importer::new();
-    let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
+    let block_path = std::env::current_dir()
+        .unwrap()
+        .join("tests/vectors/codec/data/block.json");
+    assert!(
+        block_path.exists(),
+        "Default block vector should exist: {:?}",
+        block_path
+    );
     let block = importer.import_block(&block_path)?;
     println!("Block: {:?}", block);
     println!("State: {:?}", importer.state());
@@ -17,7 +23,6 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn test_block_import() -> Result<()> {
@@ -37,7 +42,9 @@ mod tests {
             ], // parent_state_root
         );
 
-        let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
+        let block_path = std::env::current_dir()
+            .unwrap()
+            .join("tests/vectors/codec/data/block.json");
         let block = importer.import_block(&block_path)?;
 
         // Verify the block was imported successfully

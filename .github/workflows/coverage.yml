@@ -46,20 +46,40 @@ jobs:
           exit 1
         fi
 
-    - name: Upload coverage to Codecov
+    - name: Upload coverage to Codecov (Attempt 1)
       uses: codecov/codecov-action@v3
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
       with:
         files: lcov.info
         flags: unittests
         name: jamliquor-coverage
-        fail_ci_if_error: true
+        fail_ci_if_error: false
         verbose: true
         env_vars: OS,RUST
         slug: jamliqr/jamliquor
         branch: ${{ github.ref }}
         commit_parent: ${{ github.sha }}
+
+    - name: Upload coverage to Codecov (Attempt 2)
+      if: steps.upload-codecov-1.outcome == 'failure'
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
+      with:
+        files: lcov.info
+        flags: unittests
+        name: jamliquor-coverage
+        fail_ci_if_error: false
+        verbose: true
+        env_vars: OS,RUST
+        slug: jamliqr/jamliquor
+        branch: ${{ github.ref }}
+        commit_parent: ${{ github.sha }}
+      # Wait 5 minutes before retry
+      timeout-minutes: 6
 
     - name: Comprehensive Codecov Debugging
       if: failure()

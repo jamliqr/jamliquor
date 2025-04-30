@@ -34,6 +34,18 @@ jobs:
         echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
         echo "Coverage percentage: $COVERAGE%"
 
+    - name: Prepare Codecov Upload
+      run: |
+        echo "Checking lcov.info file:"
+        ls -l lcov.info
+        wc -l lcov.info
+        head -n 10 lcov.info
+        echo "Verifying LCOV file contents:"
+        if ! grep -q "SF:" lcov.info; then
+          echo "ERROR: LCOV file appears to be empty or invalid"
+          exit 1
+        fi
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       env:
@@ -42,24 +54,27 @@ jobs:
         files: lcov.info
         flags: unittests
         name: jamliquor-coverage
-        fail_ci_if_error: false
+        fail_ci_if_error: true
         verbose: true
         env_vars: OS,RUST
         slug: jamliqr/jamliquor
         branch: ${{ github.ref }}
         commit_parent: ${{ github.sha }}
 
-    - name: Debug Codecov Upload
+    - name: Comprehensive Codecov Debugging
       if: failure()
       run: |
-        echo "Listing lcov.info contents:"
-        cat lcov.info
-        echo "\nChecking Codecov upload manually:"
-        curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+        echo "Detailed Codecov Upload Debugging"
+        echo "Environment Information:"
+        env | grep -E 'GITHUB|CI|CODECOV'
+        echo "\nRepository Details:"
+        echo "Ref: ${{ github.ref }}"
+        echo "SHA: ${{ github.sha }}"
+        echo "\nLCOV File Analysis:"
+        cat lcov.info | grep "SF:" | head -n 10
+        echo "\nTotal Source Files:"
+        cat lcov.info | grep "SF:" | wc -l
+        echo "\nAttempting Manual Upload:"
         curl -Os https://uploader.codecov.io/latest/linux/codecov
-        curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
-        curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
-        gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
-        shasum -a 256 -c codecov.SHA256SUM
         chmod +x codecov
-        ./codecov -f lcov.info -F unittests -Z
+        ./codecov -f lcov.info -F unittests -Z -v

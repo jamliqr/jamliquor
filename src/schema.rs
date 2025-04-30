@@ -4,6 +4,7 @@ use thiserror::Error;
 
 /// Comprehensive error types for JAM blockchain operations
 #[derive(Error, Debug)]
+#[allow(dead_code)]
 pub enum BlockchainError {
     /// Slot validation failed
     #[error("Invalid slot: expected > {last_slot}, got {current_slot}")]
@@ -155,11 +156,6 @@ impl OpaqueHash {
     /// Create a new OpaqueHash from a byte array
     pub fn new(bytes: [u8; 32]) -> Self {
         OpaqueHash(bytes)
-    }
-
-    /// Check if the hash is empty (all zeros)
-    pub fn is_empty(&self) -> bool {
-        self.0.iter().all(|&x| x == 0)
     }
 }
 

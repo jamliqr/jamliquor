@@ -18,5 +18,5 @@ proptest! {
 }
 
 mod importer_tests;
-pub mod state_tests;
 pub mod prop_state_tests;
+pub mod state_tests;

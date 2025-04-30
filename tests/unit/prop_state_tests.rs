@@ -1,7 +1,7 @@
-use proptest::prelude::*;
-use jamliquor::schema::{Block, Header, Extrinsic, OpaqueHash};
-use serde_json;
+use jamliquor::schema::{Block, Extrinsic, Header, OpaqueHash};
 use jamliquor::state::State;
+use proptest::prelude::*;
+use serde_json;
 
 proptest! {
     /// Property test to validate state transition stability

@@ -26,10 +26,7 @@ impl State {
         // Validate slot progression
         let current_slot = block.header.slot as u64;
         if current_slot <= 42 {
-            warn!(
-                "Slot too low: current {} <= minimum 42",
-                current_slot
-            );
+            warn!("Slot too low: current {} <= minimum 42", current_slot);
             return Err(BlockchainError::InvalidSlot {
                 last_slot: 42,
                 current_slot,

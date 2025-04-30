@@ -80,10 +80,10 @@ mod property_tests {
     fn prop_block_import_sanity() {
         let mut importer = Importer::new();
         let vector_path = utils::get_vector_path("codec/data/block.json");
-        
+
         let result = importer.import_block(&vector_path);
         assert!(result.is_ok(), "Block import should succeed");
-        
+
         let block = result.unwrap();
         assert_eq!(block.header.slot, 42, "Block should have slot 42");
     }
@@ -92,13 +92,13 @@ mod property_tests {
     fn prop_state_transition_stability() {
         let mut state = State::new();
         let mut importer = Importer::new();
-        
+
         let vector_path = utils::get_vector_path("codec/data/block.json");
         let mut block = importer.import_block(&vector_path).unwrap();
-        
+
         // Modify block to have a valid slot
         block.header.slot = 43;
-        
+
         let result = state.apply_block(&block);
         assert!(result.is_ok(), "State transition should be stable");
     }
@@ -111,11 +111,20 @@ fn verify_vector_data_integrity() -> Result<()> {
 
     // Read vector contents
     let vector_contents = std::fs::read_to_string(&vector_path)?;
-    
+
     // Basic checks on vector data
-    assert!(!vector_contents.is_empty(), "Vector data should not be empty");
-    assert!(vector_contents.contains("header"), "Vector should contain block header");
-    assert!(vector_contents.contains("slot"), "Vector should contain slot information");
-    
+    assert!(
+        !vector_contents.is_empty(),
+        "Vector data should not be empty"
+    );
+    assert!(
+        vector_contents.contains("header"),
+        "Vector should contain block header"
+    );
+    assert!(
+        vector_contents.contains("slot"),
+        "Vector should contain slot information"
+    );
+
     Ok(())
 }

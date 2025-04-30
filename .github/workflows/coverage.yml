@@ -25,14 +25,21 @@ jobs:
 
     - name: Run tarpaulin
       run: |
-        cargo tarpaulin --verbose --out Xml
-        COVERAGE=$(grep -oP 'Coverage: \K[0-9.]+' tarpaulin-report.txt)
-        echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+        cargo tarpaulin --verbose --out Xml --output-dir ./coverage
+        ls -l ./coverage
+        if [ -f ./coverage/tarpaulin-report.txt ]; then
+          COVERAGE=$(grep -oP 'Coverage: \K[0-9.]+' ./coverage/tarpaulin-report.txt)
+          echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+          cat ./coverage/tarpaulin-report.txt
+        else
+          echo "Tarpaulin report not found"
+          exit 1
+        fi
 
     - name: Upload to codecov.io
       uses: codecov/codecov-action@v3
       with:
-        files: ./cobertura.xml
+        files: ./coverage/cobertura.xml
 
     - name: Update Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.6.0

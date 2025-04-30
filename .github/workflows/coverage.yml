@@ -30,24 +30,16 @@ jobs:
         COVERAGE=$(cargo llvm-cov --all-features --workspace --summary-only | grep -oP 'line: \K[0-9.]+')
         echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
 
-    - name: Upload to codecov.io
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
         files: lcov.info
         flags: unittests
-
-    - name: Update Coverage Badge
-      uses: schneegans/dynamic-badges-action@v1.6.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: e21c2f06f08f5795f50860fcbbbeb1f3
-        filename: jamliquor-coverage.json
-        label: coverage
-        message: ${{ env.COVERAGE }}%
-        color: >-
-          ${{
-            env.COVERAGE >= 80 && 'brightgreen' ||
-            env.COVERAGE >= 60 && 'green' ||
-            env.COVERAGE >= 40 && 'yellow' ||
-            'red'
-          }}
+        name: jamliquor-coverage
+        fail_ci_if_error: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
+        env_vars: OS,RUST
+        slug: jamliqr/jamliquor
+        branch: ${{ github.ref }}
+        commit_parent: ${{ github.sha }}

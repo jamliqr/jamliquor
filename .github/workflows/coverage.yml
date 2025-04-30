@@ -42,9 +42,10 @@ jobs:
         filename: jamliquor-coverage.json
         label: coverage
         message: ${{ env.COVERAGE }}%
-        color: ${{
-          env.COVERAGE >= 80 && 'brightgreen' ||
-          env.COVERAGE >= 60 && 'green' ||
-          env.COVERAGE >= 40 && 'yellow' ||
-          'red'
-        }}
+        color: >-
+          ${{
+            env.COVERAGE >= 80 && 'brightgreen' ||
+            env.COVERAGE >= 60 && 'green' ||
+            env.COVERAGE >= 40 && 'yellow' ||
+            'red'
+          }}

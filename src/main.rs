@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn test_importer_initialization() {
-        let importer = Importer::new();
+        let _importer = Importer::new();
         // TODO: Add appropriate state initialization check
     }
 

@@ -1,10 +1,10 @@
-use anyhow::Result;
+
 use jamliquor::Importer;
 use std::path::PathBuf;
 
 #[test]
 fn test_importer_initialization() {
-    let importer = Importer::new();
+    let _importer = Importer::new();
     // Verify default state
     assert!(true, "Importer should be created successfully");
 }

@@ -8,7 +8,7 @@ fn test_project_setup() {
     assert!(true, "Project testing infrastructure is functional");
 }
 
-/// Property-based test example
+
 proptest! {
     #[test]
     fn prop_test_example(x: u16, y: u16) {

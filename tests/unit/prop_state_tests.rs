@@ -8,7 +8,7 @@ proptest! {
     #[test]
     fn prop_state_transition_stability(
         initial_slot in 43..1000u32,
-        preimage_count in 0..100usize
+        _preimage_count in 0..100usize
     ) {
         // Create a valid block
         let block = Block {

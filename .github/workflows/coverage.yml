@@ -27,8 +27,12 @@ jobs:
     - name: Generate code coverage
       run: |
         cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-        COVERAGE=$(cargo llvm-cov --all-features --workspace --summary-only | grep -oP 'line: \K[0-9.]+')
+        COVERAGE=$(cargo llvm-cov --all-features --workspace --summary-only | awk '/line:/ {print $2}' | tr -d '%')
+        if [[ -z "$COVERAGE" ]]; then
+          COVERAGE="0"
+        fi
         echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+        echo "Coverage percentage: $COVERAGE%"
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

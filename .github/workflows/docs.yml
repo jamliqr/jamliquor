@@ -19,15 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+          with:
+            submodules: recursive
+
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
-      
+
       - name: Build
         run: mdbook build docs
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -42,4 +44,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 
+        uses: actions/deploy-pages@v4

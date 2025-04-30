@@ -2,7 +2,6 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use jamliquor::state::State;
 use jamliquor::Importer;
 
-/// Placeholder benchmark function
 fn benchmark_block_import(c: &mut Criterion) {
     let mut group = c.benchmark_group("Block Import");
     let mut importer = Importer::new();

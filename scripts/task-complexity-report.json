@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "generatedAt": "2025-04-30T06:19:41.798Z",
+    "tasksAnalyzed": 10,
+    "thresholdScore": 5,
+    "projectName": "Your Project Name",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Set up project foundation and architecture",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the Rust project initialization process into subtasks covering: 1) Basic cargo setup with dependencies, 2) Module structure design for core components, 3) Build configuration for multiple architectures, 4) Testing framework implementation, and 5) Documentation structure setup",
+      "reasoning": "This task involves establishing the entire project structure which requires careful planning. Following Rust best practices, starting with a single module then breaking it up as components are identified is recommended. The task includes multiple architectural decisions and cross-platform considerations."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Implement core Importer module",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the Importer module implementation into subtasks covering: 1) Block validation logic, 2) State transition functions, 3) CoreTime implementation, 4) Validator judgment ruleset, 5) Memory-optimized data structures, and 6) JAM specification compliance verification",
+      "reasoning": "This task involves complex protocol implementation with strict memory constraints. The core functionality requires careful design of data structures and algorithms to ensure correctness while maintaining performance on edge hardware."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Develop Authorer module",
+      "complexityScore": 9,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the Authorer module development into subtasks covering: 1) SAFROLE consensus implementation, 2) Ring VRF cryptographic implementation, 3) Transaction selection mechanism, 4) Block assembly pipeline, and 5) Randomness generation for consensus",
+      "reasoning": "This task involves implementing complex cryptographic algorithms and consensus mechanisms. The combination of SAFROLE and Ring VRF requires specialized knowledge and careful implementation to ensure security and performance."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Integrate PolkaVM Backend",
+      "complexityScore": 8,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the PolkaVM integration into subtasks covering: 1) Basic PolkaVM integration for smart contract execution, 2) 64-bit JIT support implementation, 3) JAM-compatible syscall interface development, and 4) RISC-V execution environment optimization",
+      "reasoning": "Integrating PolkaVM requires deep understanding of both the VM and the JAM protocol. The task involves complex systems integration work with performance optimization requirements for edge hardware."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Create modular extension system architecture",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the extension system architecture into subtasks covering: 1) Extension interface design, 2) Module loading mechanism, 3) Activation/deactivation system, 4) Configuration system for extensions, and 5) Performance optimization for minimal overhead",
+      "reasoning": "Designing a flexible extension system requires careful API design and consideration of performance implications. The system must be both powerful enough to support diverse extensions while maintaining minimal overhead when not in use."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Implement quantum-resistant cryptography modules",
+      "complexityScore": 9,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide the quantum-resistant cryptography implementation into subtasks covering: 1) Dilithium implementation, 2) Kyber implementation, 3) XMSS implementation, 4) Key management interfaces, 5) Integration with core node functionality, and 6) Performance optimization for resource-constrained devices",
+      "reasoning": "Post-quantum cryptography implementation requires specialized knowledge and careful attention to security details. Each algorithm (Dilithium, Kyber, XMSS) is complex and requires separate implementation and testing efforts."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Develop AI-adaptive node capabilities",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the AI-adaptive capabilities into subtasks covering: 1) TinyML framework integration, 2) Network condition analysis model development, 3) Adaptive response mechanism implementation, 4) Resource-efficient inference optimization, and 5) Model training and validation pipeline",
+      "reasoning": "Implementing AI capabilities on edge devices presents significant challenges in terms of resource usage and performance. The task requires specialized knowledge in both ML and edge computing optimization techniques."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Create lightweight configuration options",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the lightweight mode implementation into subtasks covering: 1) Resource usage profiling and bottleneck identification, 2) Memory optimization techniques implementation, 3) CPU usage reduction in critical paths, and 4) Configuration system for different hardware profiles",
+      "reasoning": "This task focuses on optimization rather than new feature development. It requires careful profiling and targeted improvements to reduce resource usage while maintaining functionality."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Optimize performance for edge hardware",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Break down the edge hardware optimization into subtasks covering: 1) Performance profiling on target platforms, 2) Memory-efficient data structure implementation, 3) Critical path optimization, 4) Architecture-specific optimizations for RISC-V and ARM, and 5) Performance testing and validation",
+      "reasoning": "Optimizing for specific hardware architectures requires deep understanding of both the software and hardware characteristics. The task involves complex performance tuning to meet strict timing requirements on resource-constrained devices."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Implement monitoring and configuration interface",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the interface implementation into subtasks covering: 1) Configuration interface design and implementation, 2) Module management controls development, 3) Performance and resource monitoring implementation, and 4) User flow design for different personas",
+      "reasoning": "This task involves creating a usable interface for node management. While not as technically complex as some other tasks, it requires careful consideration of user experience and integration with all other components."
+    }
+  ]
+}

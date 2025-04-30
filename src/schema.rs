@@ -154,6 +154,7 @@ impl OpaqueHash {
     }
 
     /// Create a new OpaqueHash from a byte array
+    #[allow(dead_code)]
     pub fn new(bytes: [u8; 32]) -> Self {
         OpaqueHash(bytes)
     }

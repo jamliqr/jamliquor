@@ -86,7 +86,7 @@ mod tests {
         // Explicit author_index check
         if let Some(epoch_mark) = &block.header.epoch_mark {
             assert!(
-                block.header.author_index as usize <= epoch_mark.validators.len() - 1,
+                (block.header.author_index as usize) < epoch_mark.validators.len(),
                 "Author index {} exceeds validator count {}",
                 block.header.author_index,
                 epoch_mark.validators.len()

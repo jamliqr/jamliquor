@@ -10,7 +10,7 @@ fn benchmark_block_import(c: &mut Criterion) {
 
     group.bench_function("import single block", |b| {
         b.iter(|| {
-            let block = black_box(importer.import_block(&test_vector_path)).unwrap();
+            let _block = black_box(importer.import_block(&test_vector_path)).unwrap();
         })
     });
 
@@ -25,8 +25,8 @@ fn benchmark_state_transition(c: &mut Criterion) {
 
     group.bench_function("apply block to state", |b| {
         b.iter(|| {
-            let block = black_box(importer.import_block(&test_vector_path)).unwrap();
-            black_box(state.apply_block(&block)).unwrap();
+            let _block = black_box(importer.import_block(&test_vector_path)).unwrap();
+            black_box(state.apply_block(&_block)).unwrap();
         })
     });
 

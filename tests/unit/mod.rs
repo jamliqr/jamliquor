@@ -4,9 +4,7 @@ use proptest::prelude::*;
 
 /// Basic sanity check to ensure testing infrastructure works
 #[test]
-fn test_project_setup() {
-    assert!(true, "Project testing infrastructure is functional");
-}
+fn test_project_setup() {}
 
 proptest! {
     #[test]

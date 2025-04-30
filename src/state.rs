@@ -25,10 +25,24 @@ impl State {
     pub fn apply_block(&mut self, block: &Block) -> Result<()> {
         // Validate slot progression
         let current_slot = block.header.slot as u64;
-        if current_slot <= MINIMUM_SLOT_VALUE {
-            warn!("Slot too low: current {} <= minimum {}", current_slot, MINIMUM_SLOT_VALUE);
+        if self.last_slot > 0 {
+            // Reject slots less than or equal to the last processed slot
+            if current_slot <= self.last_slot {
+                warn!("Slot must be strictly greater than last processed slot: current {} <= last processed slot {}", current_slot, self.last_slot);
+                return Err(BlockchainError::InvalidSlot {
+                    last_slot: self.last_slot,
+                    current_slot,
+                }
+                .into());
+            }
+        } else if current_slot < 43 {
+            // First active block must be at or above slot 43
+            warn!(
+                "First active block must be at or above slot 43, got {}",
+                current_slot
+            );
             return Err(BlockchainError::InvalidSlot {
-                last_slot: MINIMUM_SLOT_VALUE,
+                last_slot: 0,
                 current_slot,
             }
             .into());

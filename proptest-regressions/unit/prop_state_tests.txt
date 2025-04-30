@@ -5,3 +5,4 @@
 # It is recommended to check this file in to source control so that
 # everyone who runs the test benefits from these saved cases.
 cc bced8757adf209edff6ad7558685540495ffdbd767428b67505275dde40d67dd # shrinks to current_slot = 43, previous_slot = 0
+cc 6ad420945386bbcb930d0ad8b9f39e99a1e559ae67d5be8008110d0ae16325c8 # shrinks to current_slot = 43, previous_slot = 43

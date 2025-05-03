@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Comprehensive error types for JAM blockchain operations
+///
+/// Memory Usage:
+/// - Fixed: ~32 bytes (enum tag + variant fields)
 #[derive(Error, Debug)]
 #[allow(dead_code)]
 pub enum BlockchainError {
@@ -34,7 +37,28 @@ pub enum BlockchainError {
     ParentStateRootMismatch { expected: String, actual: String },
 }
 
+/// ValidationResult captures the outcome of block or state validation with detailed context.
+///
+/// Memory Usage:
+/// - Fixed: ~16 bytes (enum tag + u64 for code + Option<String> for message)
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
+pub enum ValidationResult {
+    /// Validation succeeded
+    Success,
+    /// Validation failed with a code and optional message
+    Failure { code: u64, message: Option<String> },
+}
+
 #[derive(Debug, Default)]
+/// State structure for tracking JAM protocol state.
+///
+/// Memory Usage:
+/// - Fixed: ~64 bytes (u64s + TicketState)
+/// - Per ticket: ~40 bytes
+/// - Per preimage: ~32 bytes + blob size
+///
+/// Total memory usage grows linearly with processed blocks
+/// but can be pruned based on configuration.
 pub struct State {
     pub last_slot: u64, // Tracks last processed slot
     pub counter: u64,   // Total valid tickets and preimages
@@ -42,6 +66,10 @@ pub struct State {
 }
 
 #[derive(Debug, Default)]
+/// TicketState tracks ticket statistics and last ticket ID.
+///
+/// Memory Usage:
+/// - Fixed: ~56 bytes (3 x u64 + Option<[u8;32]>)
 pub struct TicketState {
     pub total_tickets: u64,
     pub valid_tickets: u64,
@@ -145,7 +173,18 @@ impl State {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct OpaqueHash(#[serde(with = "hex")] [u8; 32]);
+/// OpaqueHash is a fixed-size 32-byte array used for hashes and IDs.
+///
+/// Memory Usage:
+/// - Fixed: 32 bytes
+#[serde(transparent)]
+pub struct OpaqueHash(
+    #[serde(
+        serialize_with = "hex::serialize",
+        deserialize_with = "hex::deserialize"
+    )]
+    [u8; 32],
+);
 
 impl OpaqueHash {
     /// Get the inner byte array
@@ -161,39 +200,52 @@ impl OpaqueHash {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// EpochMark represents epoch metadata and entropy.
+///
+/// Memory Usage:
+/// - Fixed: ~96 bytes (2 x OpaqueHash + Vec<Validator>)
 pub struct EpochMark {
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub entropy: OpaqueHash,
-    #[serde(rename = "tickets_entropy")]
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub tickets_entropy: OpaqueHash,
+    #[serde(deserialize_with = "hex::deserialize_vec_opaque_hash")]
     pub validators: Vec<OpaqueHash>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// Header contains block metadata and consensus information.
+///
+/// Memory Usage:
+/// - Fixed: ~200 bytes (slot, hashes, entropy, etc.)
+/// - With tickets_mark: grows with number of tickets
 pub struct Header {
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub parent: OpaqueHash,
-    #[serde(rename = "parent_state_root")] // Changed to snake_case
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub parent_state_root: OpaqueHash,
-    #[serde(rename = "extrinsic_hash")] // Changed to snake_case
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub extrinsic_hash: OpaqueHash,
     pub slot: u32,
-    #[serde(rename = "epoch_mark")]
     pub epoch_mark: Option<EpochMark>,
-    #[serde(rename = "tickets_mark")]
     pub tickets_mark: Option<Vec<TicketBody>>,
-    #[serde(rename = "offenders_mark")]
+    #[serde(deserialize_with = "hex::deserialize_vec_opaque_hash")]
     pub offenders_mark: Vec<OpaqueHash>,
-    #[serde(rename = "author_index")]
     pub author_index: u16,
-    #[serde(rename = "entropy_source", with = "hex_vec")]
+    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
     pub entropy_source: Vec<u8>,
-    #[serde(with = "hex_vec")]
+    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
     pub seal: Vec<u8>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// TicketEnvelope represents a ticket submitted by a validator.
+///
+/// Memory Usage:
+/// - Fixed: ~40 bytes (fields + hash)
 pub struct TicketEnvelope {
     pub attempt: u8,
-    #[serde(with = "hex_vec")]
+    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
     pub signature: Vec<u8>,
 }
 
@@ -212,7 +264,12 @@ impl TicketEnvelope {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// TicketBody represents the actual content of a ticket.
+///
+/// Memory Usage:
+/// - Fixed: ~40 bytes (fields + hash)
 pub struct TicketBody {
+    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub id: OpaqueHash,
     pub attempt: u8,
 }
@@ -226,13 +283,21 @@ impl TicketBody {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// Preimage represents a preimage for state transition proofs.
+///
+/// Memory Usage:
+/// - Fixed: ~32 bytes + blob size
 pub struct Preimage {
     pub requester: u32,
-    #[serde(with = "hex_vec")]
+    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
     pub blob: Vec<u8>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// Extrinsic contains tickets and preimages for a block.
+///
+/// Memory Usage:
+/// - Fixed: Small; grows with number of tickets/preimages
 pub struct Extrinsic {
     pub tickets: Vec<TicketEnvelope>,
     pub preimages: Vec<Preimage>,
@@ -242,6 +307,11 @@ pub struct Extrinsic {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+/// Block is the top-level structure for JAM blocks.
+///
+/// Memory Usage:
+/// - Fixed: header + extrinsic (see above)
+#[serde(deny_unknown_fields)]
 pub struct Block {
     pub header: Header,
     pub extrinsic: Extrinsic,
@@ -249,52 +319,64 @@ pub struct Block {
 
 mod hex {
     use serde::de::Error;
-    use serde::{Deserialize, Deserializer, Serializer};
+    use serde::{self, Deserialize, Deserializer, Serializer};
 
     pub fn serialize<S>(bytes: &[u8; 32], serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        serializer.serialize_str(&hex::encode(bytes))
+        serializer.serialize_str(&format!("0x{}", hex::encode(bytes)))
     }
 
     pub fn deserialize<'de, D>(deserializer: D) -> Result<[u8; 32], D::Error>
     where
         D: Deserializer<'de>,
     {
-        let s = String::deserialize(deserializer)?;
-        let s = s
-            .strip_prefix("0x")
-            .ok_or_else(|| D::Error::custom("expected hex string with or without 0x"))?;
+        let s: String = Deserialize::deserialize(deserializer)?;
+        let s = s.strip_prefix("0x").unwrap_or(&s);
         let bytes = hex::decode(s).map_err(D::Error::custom)?;
         if bytes.len() != 32 {
             return Err(D::Error::custom("expected 32 bytes"));
         }
-        let mut array = [0u8; 32];
-        array.copy_from_slice(&bytes);
-        Ok(array)
-    }
-}
-
-mod hex_vec {
-    use serde::de::Error;
-    use serde::{Deserialize, Deserializer, Serializer};
-
-    pub fn serialize<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(&hex::encode(bytes))
+        let mut arr = [0u8; 32];
+        arr.copy_from_slice(&bytes);
+        Ok(arr)
     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+    pub fn deserialize_opaque_hash<'de, D>(deserializer: D) -> Result<super::OpaqueHash, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let s = String::deserialize(deserializer)?;
-        let s = s
-            .strip_prefix("0x")
-            .ok_or_else(|| D::Error::custom("expected hex string with or without 0x"))?;
+        Ok(super::OpaqueHash(deserialize(deserializer)?))
+    }
+
+    pub fn deserialize_vec_opaque_hash<'de, D>(
+        deserializer: D,
+    ) -> Result<Vec<super::OpaqueHash>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let v: Vec<String> = Deserialize::deserialize(deserializer)?;
+        v.into_iter()
+            .map(|s| {
+                let s = s.strip_prefix("0x").unwrap_or(&s);
+                let bytes = hex::decode(s).map_err(D::Error::custom)?;
+                if bytes.len() != 32 {
+                    return Err(D::Error::custom("expected 32 bytes"));
+                }
+                let mut arr = [0u8; 32];
+                arr.copy_from_slice(&bytes);
+                Ok(super::OpaqueHash(arr))
+            })
+            .collect()
+    }
+
+    pub fn deserialize_vec_u8<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = Deserialize::deserialize(deserializer)?;
+        let s = s.strip_prefix("0x").unwrap_or(&s);
         hex::decode(s).map_err(D::Error::custom)
     }
 }
@@ -379,6 +461,7 @@ impl Header {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json;
 
     #[test]
     fn test_entropy_source_validation() -> Result<(), anyhow::Error> {

@@ -35,9 +35,8 @@ Create a `.cargo/config.toml` file to define build targets for RISC-V and ARM. A
 ### Details:
 Create a `tests/` directory with integration test files. Set up unit tests in each module file. Add test utilities in a `tests/common/` module. Configure test-specific dependencies in Cargo.toml. Implement basic smoke tests for each core component. Set up property-based testing with proptest if appropriate. Create a test documentation file explaining the testing approach. Ensure tests run in CI pipeline.
 
-## 5. Create documentation structure and development guidelines [pending]
+## 5. Create documentation structure and development guidelines [in-progress]
 ### Dependencies: 1.3, 1.4
 ### Description: Establish comprehensive documentation for the project including architecture and contribution guidelines
 ### Details:
 Create a `docs/` directory with markdown files for: architecture overview, component design, API documentation, and development workflow. Set up rustdoc comments in code. Create CONTRIBUTING.md with guidelines for the cleanroom development approach. Document the public commit history requirements. Add architecture diagrams (using Mermaid or similar). Create examples directory with sample code. Set up documentation generation in CI. Add badges to README.md for build status and documentation links.
-

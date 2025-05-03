@@ -4,7 +4,7 @@
 
 _Lightweight. Adaptive. Quantum-Resistant. JAM-native._
 
-![License](https://img.shields.io/badge/license-GPL_3.0-blue.svg) ![Language](https://img.shields.io/badge/language-Rust-orange.svg) [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/jamliqr/e21c2f06f08f5795f50860fcbbbeb1f3/raw/jamliquor-coverage.json)](https://github.com/jamliqr/jamliquor/actions) ![Status](https://img.shields.io/badge/status-Experimental-lightgrey)
+![License](https://img.shields.io/badge/license-GPL_3.0-blue.svg) ![Language](https://img.shields.io/badge/language-Rust-orange.svg) [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/jamliqr/e21c2f06f08f5795f50860fcbbbeb1f3/raw/jamliquor-coverage.json)](https://github.com/jamliqr/jamliquor/actions) ![Status](https://img.shields.io/badge/status-Experimental-lightgrey) [![Docs](https://img.shields.io/badge/docs-online-blueviolet)](https://yourusername.github.io/jamliquor/) [![Build Status](https://github.com/yourusername/jamliquor/actions/workflows/coverage.yml/badge.svg)](https://github.com/yourusername/jamliquor/actions)
 
 ---
 
@@ -109,7 +109,7 @@ Licensed under **GPL-3.0**. Cleanroom declarations and IP policy documented in [
 
 ## 🚀 Join the Movement
 
-JamLiquor is a JAM client with purpose.  
+JamLiquor is a JAM client with purpose.
 Compliant by design. Modular by philosophy. Edge-ready by default.
 
 **We don't fork the future. We build it.**

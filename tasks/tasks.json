@@ -52,7 +52,7 @@
           "id": 5,
           "title": "Create documentation structure and development guidelines",
           "description": "Establish comprehensive documentation for the project including architecture and contribution guidelines",
-          "status": "pending",
+          "status": "in-progress",
           "dependencies": [
             3,
             4

@@ -1,6 +1,6 @@
 # Task ID: 2
 # Title: Implement core Importer module
-# Status: pending
+# Status: in-progress
 # Dependencies: 1
 # Priority: high
 # Description: Develop the foundational Importer module for block verification and state transitions
@@ -11,13 +11,13 @@ Implement JAM Protocol block validation logic, state transition functions, and C
 Create comprehensive unit tests for block validation and state transitions. Develop integration tests with mock blocks to verify correct behavior. Benchmark memory usage to ensure compliance with ≤128MB RAM requirement.
 
 # Subtasks:
-## 1. Design JAM Protocol data structures [pending]
+## 1. Design JAM Protocol data structures [done]
 ### Dependencies: None
 ### Description: Create the foundational data structures needed for the JAM Protocol Compliant State Transition Model
 ### Details:
 Define memory-efficient data structures for blocks, transactions, state objects, and validation results. Implement structs for CoreTime accounting and validator judgments. Ensure all data structures are optimized for minimal memory footprint to support edge hardware constraints. Document memory usage estimates for each structure. Include serialization/deserialization methods compatible with the JAM specification.
 
-## 2. Implement block parsing and validation [pending]
+## 2. Implement block parsing and validation [in-progress]
 ### Dependencies: 2.1
 ### Description: Create functions to parse incoming blocks and perform basic structural validation
 ### Details:
@@ -46,4 +46,3 @@ Create functions to apply validated blocks to the current state. Implement atomi
 ### Description: Connect all components into a cohesive Importer module and optimize for performance
 ### Details:
 Create the main Importer interface that orchestrates the entire block import process. Implement proper error handling and recovery mechanisms. Perform memory and CPU profiling to identify bottlenecks. Optimize critical paths for performance while maintaining correctness. Implement caching strategies for frequently accessed data. Create comprehensive tests for the entire import flow including edge cases and error conditions. Document the module's API and internal architecture.
-

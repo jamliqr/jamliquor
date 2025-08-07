@@ -38,8 +38,7 @@ impl State {
         } else if current_slot < 43 {
             // First active block must be at or above slot 43
             warn!(
-                "First active block must be at or above slot 43, got {}",
-                current_slot
+                "First active block must be at or above slot 43, got {current_slot}"
             );
             return Err(BlockchainError::InvalidSlot {
                 last_slot: 0,
@@ -49,13 +48,13 @@ impl State {
         }
 
         // Update slot
-        info!("Processing block at slot: {}", current_slot);
+        info!("Processing block at slot: {current_slot}");
         self.last_slot = current_slot;
 
         // Advanced state transition logic
         let preimage_count = block.extrinsic.preimages.len() as u64;
         if preimage_count > 0 {
-            info!("Processing {} preimages", preimage_count);
+            info!("Processing {preimage_count} preimages");
             self.counter += preimage_count;
         }
 

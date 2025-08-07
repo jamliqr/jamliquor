@@ -9,7 +9,7 @@ fn main() -> Result<()> {
     let mut importer = Importer::new();
     let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
     let block = importer.import_block(&block_path)?;
-    println!("Block: {:?}", block);
+    println!("Block: {block:?}");
     println!("State: {:?}", importer.state());
     Ok(())
 }

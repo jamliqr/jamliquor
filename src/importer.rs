@@ -42,7 +42,7 @@ impl Importer {
         // Update last block hash and state root
         let extrinsic_hash = hex::encode(block.header.extrinsic_hash.as_bytes());
 
-        info!("Block imported successfully: hash={}", extrinsic_hash);
+        info!("Block imported successfully: hash={extrinsic_hash}");
 
         self.last_block_hash = Some(*block.header.extrinsic_hash.as_bytes());
         self.last_state_root = Some(*block.header.parent_state_root.as_bytes());
@@ -65,8 +65,7 @@ impl Importer {
         // Slot validation
         if current_slot <= last_slot {
             warn!(
-                "Invalid slot progression: current {} <= last {}",
-                current_slot, last_slot
+                "Invalid slot progression: current {current_slot} <= last {last_slot}"
             );
             return Err(BlockchainError::InvalidSlot {
                 last_slot,
@@ -111,7 +110,7 @@ impl Importer {
         // Entropy validation (placeholder)
         let _entropy_source = header.validate_entropy()?;
 
-        info!("Header validation passed for slot {}", current_slot);
+        info!("Header validation passed for slot {current_slot}");
 
         // Optional additional validations
         if let Some(epoch_mark) = &header.epoch_mark {

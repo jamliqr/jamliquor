@@ -59,3 +59,7 @@ node_modules/
 # Task master
 README-task-master.md
 .windsurfrules
+
+# Task files
+# tasks.json
+# tasks/ 

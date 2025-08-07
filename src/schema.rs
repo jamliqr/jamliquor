@@ -1,3 +1,4 @@
+use ::hex::FromHexError;
 use log::error;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -5,7 +6,7 @@ use thiserror::Error;
 /// Comprehensive error types for JAM blockchain operations
 ///
 /// Memory Usage:
-/// - Fixed: ~32 bytes (enum tag + variant fields)
+/// - Fixed: ~32-64 bytes (enum tag + variant fields)
 #[derive(Error, Debug)]
 #[allow(dead_code)]
 pub enum BlockchainError {
@@ -35,6 +36,38 @@ pub enum BlockchainError {
     /// Parent state root mismatch
     #[error("Parent state root mismatch: expected {expected}, got {actual}")]
     ParentStateRootMismatch { expected: String, actual: String },
+
+    /// Invalid block structure
+    #[error("Invalid block structure: {reason}")]
+    InvalidBlockStructure { reason: String },
+
+    /// Invalid transaction inclusion proof
+    #[error("Invalid transaction inclusion proof: {reason}")]
+    InvalidInclusionProof { reason: String },
+
+    /// Invalid signature
+    #[error("Invalid signature: {reason}")]
+    InvalidSignature { reason: String },
+
+    /// Invalid entropy source
+    #[error("Invalid entropy source: {reason}")]
+    InvalidEntropy { reason: String },
+
+    /// Invalid preimage
+    #[error("Invalid preimage: {reason}")]
+    InvalidPreimage { reason: String },
+
+    /// I/O error
+    #[error("I/O error: {0}")]
+    IoError(#[from] std::io::Error),
+
+    /// JSON serialization/deserialization error
+    #[error("JSON error: {0}")]
+    JsonError(#[from] serde_json::Error),
+
+    /// Hex decoding error
+    #[error("Hex decoding error: {0}")]
+    HexError(#[from] FromHexError),
 }
 
 /// ValidationResult captures the outcome of block or state validation with detailed context.
@@ -172,19 +205,30 @@ impl State {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 /// OpaqueHash is a fixed-size 32-byte array used for hashes and IDs.
 ///
 /// Memory Usage:
 /// - Fixed: 32 bytes
-#[serde(transparent)]
-pub struct OpaqueHash(
-    #[serde(
-        serialize_with = "hex::serialize",
-        deserialize_with = "hex::deserialize"
-    )]
-    [u8; 32],
-);
+pub struct OpaqueHash([u8; 32]);
+
+impl serde::Serialize for OpaqueHash {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        hex::serialize_opaque_hash(self, serializer)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for OpaqueHash {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        hex::deserialize_opaque_hash(deserializer)
+    }
+}
 
 impl OpaqueHash {
     /// Get the inner byte array
@@ -220,21 +264,27 @@ pub struct EpochMark {
 /// - Fixed: ~200 bytes (slot, hashes, entropy, etc.)
 /// - With tickets_mark: grows with number of tickets
 pub struct Header {
-    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub parent: OpaqueHash,
-    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub parent_state_root: OpaqueHash,
-    #[serde(deserialize_with = "hex::deserialize_opaque_hash")]
     pub extrinsic_hash: OpaqueHash,
     pub slot: u32,
     pub epoch_mark: Option<EpochMark>,
     pub tickets_mark: Option<Vec<TicketBody>>,
-    #[serde(deserialize_with = "hex::deserialize_vec_opaque_hash")]
+    #[serde(
+        serialize_with = "hex::serialize_vec_opaque_hash",
+        deserialize_with = "hex::deserialize_vec_opaque_hash"
+    )]
     pub offenders_mark: Vec<OpaqueHash>,
     pub author_index: u16,
-    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
+    #[serde(
+        serialize_with = "hex::serialize_vec_u8",
+        deserialize_with = "hex::deserialize_vec_u8"
+    )]
     pub entropy_source: Vec<u8>,
-    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
+    #[serde(
+        serialize_with = "hex::serialize_vec_u8",
+        deserialize_with = "hex::deserialize_vec_u8"
+    )]
     pub seal: Vec<u8>,
 }
 
@@ -321,14 +371,16 @@ mod hex {
     use serde::de::Error;
     use serde::{self, Deserialize, Deserializer, Serializer};
 
-    pub fn serialize<S>(bytes: &[u8; 32], serializer: S) -> Result<S::Ok, S::Error>
+    // Serialize a byte array as a hex string with 0x prefix
+    pub fn serialize_bytes<S>(bytes: &[u8; 32], serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         serializer.serialize_str(&format!("0x{}", hex::encode(bytes)))
     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<[u8; 32], D::Error>
+    // Deserialize a hex string (with optional 0x prefix) into a byte array
+    pub fn deserialize_bytes<'de, D>(deserializer: D) -> Result<[u8; 32], D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -342,12 +394,52 @@ mod hex {
         arr.copy_from_slice(&bytes);
         Ok(arr)
     }
+    
+    // Serialize an OpaqueHash as a hex string with 0x prefix
+    pub fn serialize_opaque_hash<S>(hash: &super::OpaqueHash, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&format!("0x{}", hex::encode(hash.0)))
+    }
+
+    pub fn serialize_vec_u8<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&format!("0x{}", hex::encode(bytes)))
+    }
+
+    pub fn deserialize_vec_u8<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = Deserialize::deserialize(deserializer)?;
+        let s = s.strip_prefix("0x").unwrap_or(&s);
+        hex::decode(s).map_err(D::Error::custom)
+    }
 
     pub fn deserialize_opaque_hash<'de, D>(deserializer: D) -> Result<super::OpaqueHash, D::Error>
     where
         D: Deserializer<'de>,
     {
-        Ok(super::OpaqueHash(deserialize(deserializer)?))
+        let bytes = deserialize_bytes(deserializer)?;
+        Ok(super::OpaqueHash(bytes))
+    }
+
+    pub fn serialize_vec_opaque_hash<S>(
+        hashes: &[super::OpaqueHash],
+        serializer: S,
+    ) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        use serde::ser::SerializeSeq;
+        let mut seq = serializer.serialize_seq(Some(hashes.len()))?;
+        for hash in hashes {
+            seq.serialize_element(&format!("0x{}", hex::encode(hash.0)))?;
+        }
+        seq.end()
     }
 
     pub fn deserialize_vec_opaque_hash<'de, D>(
@@ -369,15 +461,6 @@ mod hex {
                 Ok(super::OpaqueHash(arr))
             })
             .collect()
-    }
-
-    pub fn deserialize_vec_u8<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s: String = Deserialize::deserialize(deserializer)?;
-        let s = s.strip_prefix("0x").unwrap_or(&s);
-        hex::decode(s).map_err(D::Error::custom)
     }
 }
 

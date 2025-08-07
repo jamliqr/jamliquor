@@ -4,7 +4,7 @@
       "id": 1,
       "title": "Set up project foundation and architecture",
       "description": "Initialize the JamLiquor project with basic structure, dependencies, and architectural scaffolding",
-      "status": "pending",
+      "status": "done",
       "dependencies": [],
       "priority": "high",
       "details": "Create a new Rust project with cargo, set up the recommended Rust version (1.70+), establish module structure for core components (Importer, Authorer, PolkaVM Backend, Extensions), configure build targets for RISC-V and ARM architectures, set up testing framework, and create documentation structure. Include configuration for the cleanroom development approach with public commit history.",
@@ -52,7 +52,7 @@
           "id": 5,
           "title": "Create documentation structure and development guidelines",
           "description": "Establish comprehensive documentation for the project including architecture and contribution guidelines",
-          "status": "in-progress",
+          "status": "done",
           "dependencies": [
             3,
             4
@@ -65,7 +65,7 @@
       "id": 2,
       "title": "Implement core Importer module",
       "description": "Develop the foundational Importer module for block verification and state transitions",
-      "status": "pending",
+      "status": "in-progress",
       "dependencies": [
         1
       ],
@@ -77,7 +77,7 @@
           "id": 1,
           "title": "Design JAM Protocol data structures",
           "description": "Create the foundational data structures needed for the JAM Protocol Compliant State Transition Model",
-          "status": "pending",
+          "status": "done",
           "dependencies": [],
           "details": "Define memory-efficient data structures for blocks, transactions, state objects, and validation results. Implement structs for CoreTime accounting and validator judgments. Ensure all data structures are optimized for minimal memory footprint to support edge hardware constraints. Document memory usage estimates for each structure. Include serialization/deserialization methods compatible with the JAM specification."
         },
@@ -85,7 +85,7 @@
           "id": 2,
           "title": "Implement block parsing and validation",
           "description": "Create functions to parse incoming blocks and perform basic structural validation",
-          "status": "pending",
+          "status": "in-progress",
           "dependencies": [
             1
           ],

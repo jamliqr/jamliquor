@@ -37,9 +37,7 @@ impl State {
             }
         } else if current_slot < 43 {
             // First active block must be at or above slot 43
-            warn!(
-                "First active block must be at or above slot 43, got {current_slot}"
-            );
+            warn!("First active block must be at or above slot 43, got {current_slot}");
             return Err(BlockchainError::InvalidSlot {
                 last_slot: 0,
                 current_slot,

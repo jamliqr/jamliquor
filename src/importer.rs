@@ -64,9 +64,7 @@ impl Importer {
 
         // Slot validation
         if current_slot <= last_slot {
-            warn!(
-                "Invalid slot progression: current {current_slot} <= last {last_slot}"
-            );
+            warn!("Invalid slot progression: current {current_slot} <= last {last_slot}");
             return Err(BlockchainError::InvalidSlot {
                 last_slot,
                 current_slot,

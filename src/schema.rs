@@ -462,7 +462,6 @@ impl Header {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_entropy_source_validation() -> Result<(), anyhow::Error> {
         // Create a valid entropy source (96 bytes)

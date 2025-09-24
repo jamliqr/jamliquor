@@ -49,4 +49,4 @@ JamLiquor is architected for simplicity:
 
 It is not just a lab experiment. It's aiming to be a working node for humans.
 
-**Simplicity scales. Simplicity survives.** 
+**Simplicity scales. Simplicity survives.**

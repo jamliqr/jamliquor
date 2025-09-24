@@ -38,7 +38,7 @@ globs: **/*
     select: { id: true, email: true },
     where: { status: 'ACTIVE' }
   });
-  
+
   // Consider adding to [prisma.md](.windsurf/rules/prisma.md):
   // - Standard select fields
   // - Common where conditions

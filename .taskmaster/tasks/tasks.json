@@ -85,7 +85,7 @@
           "id": 2,
           "title": "Implement block parsing and validation",
           "description": "Create functions to parse incoming blocks and perform basic structural validation",
-          "status": "in-progress",
+          "status": "done",
           "dependencies": [
             1
           ],

@@ -1,4 +1,5 @@
 use ::hex::FromHexError;
+use blake2b_simd::Params as Blake2bParams;
 use log::error;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -243,7 +244,7 @@ impl OpaqueHash {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// EpochMark represents epoch metadata and entropy.
 ///
 /// Memory Usage:
@@ -257,7 +258,7 @@ pub struct EpochMark {
     pub validators: Vec<OpaqueHash>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// Header contains block metadata and consensus information.
 ///
 /// Memory Usage:
@@ -295,7 +296,10 @@ pub struct Header {
 /// - Fixed: ~40 bytes (fields + hash)
 pub struct TicketEnvelope {
     pub attempt: u8,
-    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
+    #[serde(
+        serialize_with = "hex::serialize_vec_u8",
+        deserialize_with = "hex::deserialize_vec_u8"
+    )]
     pub signature: Vec<u8>,
 }
 
@@ -313,7 +317,7 @@ impl TicketEnvelope {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// TicketBody represents the actual content of a ticket.
 ///
 /// Memory Usage:
@@ -339,7 +343,10 @@ impl TicketBody {
 /// - Fixed: ~32 bytes + blob size
 pub struct Preimage {
     pub requester: u32,
-    #[serde(deserialize_with = "hex::deserialize_vec_u8")]
+    #[serde(
+        serialize_with = "hex::serialize_vec_u8",
+        deserialize_with = "hex::deserialize_vec_u8"
+    )]
     pub blob: Vec<u8>,
 }
 
@@ -354,6 +361,21 @@ pub struct Extrinsic {
     pub guarantees: Vec<serde_json::Value>,
     pub assurances: Vec<serde_json::Value>,
     pub disputes: serde_json::Value,
+}
+
+impl Extrinsic {
+    /// Compute the canonical Blake2b-256 hash of the extrinsic payload.
+    pub fn compute_hash(&self) -> Result<[u8; 32], serde_json::Error> {
+        let payload = serde_json::to_vec(self)?;
+        let hash = Blake2bParams::new()
+            .hash_length(32)
+            .to_state()
+            .update(&payload)
+            .finalize();
+        let mut result = [0u8; 32];
+        result.copy_from_slice(hash.as_bytes());
+        Ok(result)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -394,7 +416,7 @@ mod hex {
         arr.copy_from_slice(&bytes);
         Ok(arr)
     }
-    
+
     // Serialize an OpaqueHash as a hex string with 0x prefix
     pub fn serialize_opaque_hash<S>(hash: &super::OpaqueHash, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -448,19 +470,40 @@ mod hex {
     where
         D: Deserializer<'de>,
     {
-        let v: Vec<String> = Deserialize::deserialize(deserializer)?;
-        v.into_iter()
-            .map(|s| {
-                let s = s.strip_prefix("0x").unwrap_or(&s);
-                let bytes = hex::decode(s).map_err(D::Error::custom)?;
-                if bytes.len() != 32 {
-                    return Err(D::Error::custom("expected 32 bytes"));
+        use serde_json::Value;
+
+        let values: Vec<Value> = Deserialize::deserialize(deserializer)?;
+        values
+            .into_iter()
+            .map(|value| {
+                match value {
+                    Value::String(s) => decode_hash_string::<D>(&s),
+                    Value::Object(map) => {
+                        let hex_value = map
+                            .get("ed25519")
+                            .or_else(|| map.get("bandersnatch"))
+                            .and_then(|v| v.as_str())
+                            .ok_or_else(|| D::Error::custom("expected ed25519 or bandersnatch hex string"))?;
+                        decode_hash_string::<D>(hex_value)
+                    }
+                    _ => Err(D::Error::custom("expected hex string or validator object")),
                 }
-                let mut arr = [0u8; 32];
-                arr.copy_from_slice(&bytes);
-                Ok(super::OpaqueHash(arr))
             })
             .collect()
+    }
+
+    fn decode_hash_string<'de, D>(s: &str) -> Result<super::OpaqueHash, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let trimmed = s.strip_prefix("0x").unwrap_or(s);
+        let bytes = hex::decode(trimmed).map_err(D::Error::custom)?;
+        if bytes.len() != 32 {
+            return Err(D::Error::custom("expected 32 bytes"));
+        }
+        let mut arr = [0u8; 32];
+        arr.copy_from_slice(&bytes);
+        Ok(super::OpaqueHash(arr))
     }
 }
 

@@ -498,4 +498,4 @@ JamLiquor is a lightweight, decentralized blockchain platform designed to run on
 - Code review requirements
 - Performance benchmarks
 - Security guidelines
-</PRD> 
+</PRD>

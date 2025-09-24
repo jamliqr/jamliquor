@@ -27,7 +27,7 @@ impl Importer {
     }
 
     /// Import and validate a block from a given path
-    /// 
+    ///
     /// This function performs streaming JSON parsing for memory efficiency with large blocks.
     /// It validates the block structure, header, and transactions before applying state changes.
     pub fn import_block<P: AsRef<Path>>(&mut self, path: P) -> Result<Block> {
@@ -38,10 +38,10 @@ impl Importer {
         let file = File::open(path)
             .map_err(BlockchainError::IoError)
             .with_context(|| format!("Failed to open block file: {}", path.display()))?;
-        
+
         // Use buffered reader for better performance
         let reader = BufReader::new(file);
-        
+
         // Parse JSON with size limits for security
         let block: Block = serde_json::from_reader(reader)
             .map_err(BlockchainError::JsonError)
@@ -63,7 +63,7 @@ impl Importer {
     }
 
     /// Validates and applies a block to the current state
-    /// 
+    ///
     /// This performs all necessary validations in the correct order:
     /// 1. Structural validation
     /// 2. Header validation
@@ -71,24 +71,24 @@ impl Importer {
     /// 4. State transition validation
     fn validate_and_apply_block(&mut self, block: &Block) -> Result<()> {
         debug!("Starting validation for block at slot {}", block.header.slot);
-        
+
         // 1. Validate block structure
         self.validate_block_structure(block)?;
-        
+
         // 2. Validate header (includes parent hash, slot, etc.)
         self.validate_header(&block.header)?;
-        
+
         // 3. Validate all transactions and their proofs
         self.validate_extrinsic(&block.header, &block.extrinsic)?;
-        
+
         // 4. Apply state transition
         trace!("Applying state transition for block at slot {}", block.header.slot);
         self.state.apply_block(block)?;
-        
+
         debug!("Successfully validated and applied block at slot {}", block.header.slot);
         Ok(())
     }
-    
+
     /// Validates the structural integrity of the block
     fn validate_block_structure(&self, block: &Block) -> Result<()> {
         // Check header has a valid slot number
@@ -98,7 +98,7 @@ impl Importer {
                 current_slot: 0,
             }.into());
         }
-        
+
         // Validate extrinsic structure
         if block.extrinsic.tickets.len() != block.header.tickets_mark.as_ref().map_or(0, |tm| tm.len()) {
             return Err(BlockchainError::InvalidBlockStructure {
@@ -109,7 +109,7 @@ impl Importer {
                 )
             }.into());
         }
-        
+
         // Validate preimages if any
         for (i, preimage) in block.extrinsic.preimages.iter().enumerate() {
             if preimage.blob.is_empty() {
@@ -118,12 +118,12 @@ impl Importer {
                 }.into());
             }
         }
-        
+
         Ok(())
     }
 
     /// Validates block header with comprehensive checks
-    /// 
+    ///
     /// This includes:
     /// - Slot progression validation
     /// - Parent hash validation
@@ -133,7 +133,7 @@ impl Importer {
     fn validate_header(&self, header: &Header) -> Result<()> {
         let current_slot = u64::from(header.slot);
         let last_slot = self.state.get_last_slot();
-        
+
         trace!("Validating header for slot {} (last slot: {})", current_slot, last_slot);
 
         // Slot validation
@@ -185,7 +185,7 @@ impl Importer {
             .map_err(|e| BlockchainError::InvalidEntropy {
                 reason: format!("Invalid entropy source: {}", e)
             })?;
-            
+
         trace!("Entropy validation passed for slot {}", current_slot);
 
         info!("Header validation passed for slot {current_slot}");
@@ -210,14 +210,14 @@ impl Importer {
     }
 
     /// Validates all transactions in the extrinsic
-    /// 
+    ///
     /// This includes:
     /// - Ticket validation against marks
     /// - Signature verification
     /// - Transaction inclusion proofs
     fn validate_extrinsic(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
         debug!("Validating extrinsic with {} tickets", extrinsic.tickets.len());
-        
+
         // Validate tickets against marks if marks exist
         if let Some(tickets_mark) = &header.tickets_mark {
             // This check is redundant with validate_block_structure but kept for defense in depth
@@ -241,7 +241,7 @@ impl Importer {
                         )
                     }.into());
                 }
-                
+
                 // Additional ticket validation
                 if let Err(e) = ticket.validate() {
                     return Err(BlockchainError::TicketValidationError {
@@ -254,7 +254,7 @@ impl Importer {
                 reason: "Tickets present but no tickets mark in header".to_string()
             }.into());
         }
-        
+
         // Validate preimages
         for (i, preimage) in extrinsic.preimages.iter().enumerate() {
             if preimage.requester == 0 {
@@ -263,12 +263,39 @@ impl Importer {
                 }.into());
             }
         }
-        
-        // TODO: Add transaction inclusion proof validation once merkle tree implementation is available
-        
-        debug!("Extrinsic validation passed with {} tickets and {} preimages", 
+
+        // Validate extrinsic hash commitment in header
+        self.validate_extrinsic_hash(header, extrinsic)?;
+
+        debug!("Extrinsic validation passed with {} tickets and {} preimages",
               extrinsic.tickets.len(), extrinsic.preimages.len());
-              
+
+        Ok(())
+    }
+
+    fn validate_extrinsic_hash(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
+        let computed_hash = extrinsic
+            .compute_hash()
+            .map_err(|e| BlockchainError::InvalidInclusionProof {
+                reason: format!("Failed to serialize extrinsic for hashing: {}", e),
+            })?;
+
+        if header.extrinsic_hash.as_bytes() != &computed_hash {
+            return Err(BlockchainError::InvalidInclusionProof {
+                reason: format!(
+                    "Extrinsic hash mismatch: expected {}, computed {}",
+                    hex::encode(header.extrinsic_hash.as_bytes()),
+                    hex::encode(computed_hash)
+                ),
+            }
+            .into());
+        }
+
+        trace!(
+            "Extrinsic hash validated: {}",
+            hex::encode(computed_hash)
+        );
+
         Ok(())
     }
 

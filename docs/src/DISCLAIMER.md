@@ -14,7 +14,7 @@ We are building:
 - This project evolves **in the open**, and you may encounter broken builds, failed assumptions, or shifting structures.
 - We **expect failure**. We are building through it.
 
-> If it works: credit belongs to the builders who dared to dream.  
+> If it works: credit belongs to the builders who dared to dream.
 > If it fails: the lessons will shape what comes next.
 
 We welcome contributors, skeptics, and dreamers alike.
@@ -22,4 +22,3 @@ We welcome contributors, skeptics, and dreamers alike.
 ---
 
 **JamLiquor is not just code. It's a test of belief in the possible.**
-

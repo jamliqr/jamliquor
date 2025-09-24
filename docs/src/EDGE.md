@@ -118,4 +118,3 @@ JamLiquor makes **edge blockchain execution viable** by combining:
 It doesn’t fight device limitations—it **embraces** them, then turns them into a strength.
 
 **The edge isn’t a compromise. It’s the future.**
-

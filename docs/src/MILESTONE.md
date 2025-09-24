@@ -58,12 +58,12 @@ pub enum StateError {
 #### 5. Documentation
 ```rust
 /// State structure for tracking JAM protocol state.
-/// 
+///
 /// Memory Usage:
 /// - Fixed: ~100 bytes
 /// - Per ticket: ~40 bytes
 /// - Per preimage: ~32 bytes + blob size
-/// 
+///
 /// Total memory usage grows linearly with processed blocks
 /// but can be pruned based on configuration.
 pub struct State {
@@ -170,4 +170,4 @@ This document is updated:
 - Monthly with milestone reviews
 - Quarterly with roadmap adjustments
 
-Last Updated: [Current Date] 
+Last Updated: [Current Date]

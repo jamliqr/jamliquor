@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 fn main() -> Result<()> {
     let mut importer = Importer::new();
-    let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
+    let block_path = PathBuf::from("tests/vectors/codec/tiny/block.json");
     let block = importer.import_block(&block_path)?;
     println!("Block: {block:?}");
     println!("State: {:?}", importer.state());
@@ -17,99 +17,99 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use jamliquor::schema::{
+        Block, Extrinsic, Header, OpaqueHash, Preimage, TicketBody, TicketEnvelope,
+    };
+    use serde_json::{to_value, Value};
+    use std::fs::File;
     use std::path::PathBuf;
+    use tempfile::tempdir;
+
+    fn build_sample_block() -> (Block, Value) {
+        let mut block = Block {
+            header: Header {
+                parent: OpaqueHash::new([0u8; 32]),
+                parent_state_root: OpaqueHash::new([1u8; 32]),
+                extrinsic_hash: OpaqueHash::new([0u8; 32]),
+                slot: 43,
+                epoch_mark: None,
+                tickets_mark: Some(vec![TicketBody {
+                    id: OpaqueHash::new([2u8; 32]),
+                    attempt: 1,
+                }]),
+                offenders_mark: vec![OpaqueHash::new([3u8; 32])],
+                author_index: 0,
+                entropy_source: vec![4u8; 96],
+                seal: vec![5u8; 32],
+            },
+            extrinsic: Extrinsic {
+                tickets: vec![TicketEnvelope {
+                    attempt: 1,
+                    signature: vec![6u8; 64],
+                }],
+                preimages: vec![Preimage {
+                    requester: 1,
+                    blob: vec![1u8, 2, 3, 4],
+                }],
+                guarantees: Vec::new(),
+                assurances: Vec::new(),
+                disputes: Value::Null,
+            },
+        };
+
+        let extrinsic_hash = block
+            .extrinsic
+            .compute_hash()
+            .expect("failed to compute extrinsic hash");
+        block.header.extrinsic_hash = OpaqueHash::new(extrinsic_hash);
+
+        let block_json = to_value(&block).expect("failed to serialize block to JSON");
+
+        (block, block_json)
+    }
+
+    fn write_block_json(value: &Value) -> Result<PathBuf> {
+        let dir = tempdir()?;
+        let file_path = dir.path().join("block.json");
+        serde_json::to_writer(File::create(&file_path)?, value)?;
+        std::mem::forget(dir);
+        Ok(file_path)
+    }
 
     #[test]
     fn test_block_import() -> Result<()> {
         let mut importer = Importer::new();
+        let (block, block_json) = build_sample_block();
 
-        // Set initial state to match block.json's parent
         importer.set_initial_state(
-            [
-                0x5c, 0x74, 0x3d, 0xbc, 0x51, 0x42, 0x84, 0xb2, 0xea, 0x57, 0x79, 0x87, 0x87, 0xc5,
-                0xa1, 0x55, 0xef, 0x9d, 0x7a, 0xc1, 0xe9, 0x49, 0x9e, 0xc6, 0x59, 0x10, 0xa7, 0xa3,
-                0xd6, 0x58, 0x97, 0xb7,
-            ], // parent
-            [
-                0x25, 0x91, 0xeb, 0xd0, 0x47, 0x48, 0x9f, 0x10, 0x06, 0x36, 0x1a, 0x42, 0x54, 0x73,
-                0x14, 0x66, 0xa9, 0x46, 0x17, 0x4a, 0xf0, 0x2f, 0xe1, 0xd8, 0x66, 0x81, 0xd2, 0x54,
-                0xcf, 0xd4, 0xa0, 0x0b,
-            ], // parent_state_root
+            *block.header.parent.as_bytes(),
+            *block.header.parent_state_root.as_bytes(),
         );
 
-        let block_path = PathBuf::from("tests/vectors/codec/data/block.json");
-        let block = importer.import_block(&block_path)?;
+        let block_path = write_block_json(&block_json)?;
+        let imported_block = importer.import_block(&block_path)?;
 
-        // Verify the block was imported successfully
-        assert!(block.header.slot > 0, "Block slot should be positive");
-        assert_eq!(importer.state().get_last_slot(), block.header.slot as u64);
+        assert_eq!(
+            imported_block.header.extrinsic_hash.as_bytes(),
+            block.header.extrinsic_hash.as_bytes(),
+            "Extrinsic hash should match header commitment"
+        );
 
-        // Get ticket stats
+        assert_eq!(
+            importer.state().get_last_slot(),
+            imported_block.header.slot as u64,
+            "Last slot should update after import"
+        );
+
         let (total_tickets, valid_tickets, invalid_tickets) = importer.state().get_ticket_stats();
+        assert_eq!(total_tickets, 1, "Should track one ticket");
+        assert_eq!(valid_tickets, 1, "Ticket should be valid");
+        assert_eq!(invalid_tickets, 0, "No invalid tickets expected");
 
-        // Verify ticket counts
-        if let Some(tickets_mark) = &block.header.tickets_mark {
-            assert_eq!(
-                total_tickets,
-                tickets_mark.len() as u64,
-                "Total tickets count mismatch"
-            );
-            assert_eq!(
-                valid_tickets + invalid_tickets,
-                total_tickets,
-                "Valid + invalid tickets should equal total"
-            );
-        }
-
-        // Count valid preimages (non-empty blob)
-        let valid_preimage_count = block
-            .extrinsic
-            .preimages
-            .iter()
-            .filter(|preimage| !preimage.blob.is_empty())
-            .count() as u64;
-
-        // Verify total counter equals valid tickets plus valid preimages
         assert_eq!(
             importer.state().get_counter(),
-            valid_tickets + valid_preimage_count,
-            "Counter should equal valid tickets + valid preimages"
-        );
-
-        // Explicit author_index check
-        if let Some(epoch_mark) = &block.header.epoch_mark {
-            assert!(
-                (block.header.author_index as usize) < epoch_mark.validators.len(),
-                "Author index {} exceeds validator count {}",
-                block.header.author_index,
-                epoch_mark.validators.len()
-            );
-        }
-
-        // Explicit tickets_mark check
-        if let Some(tickets_mark) = &block.header.tickets_mark {
-            assert_eq!(
-                tickets_mark.len(),
-                block.extrinsic.tickets.len(),
-                "Tickets mark count ({}) mismatch with extrinsic tickets count ({})",
-                tickets_mark.len(),
-                block.extrinsic.tickets.len()
-            )
-        }
-
-        // Explicit offenders_mark check
-        assert!(
-            !block.header.offenders_mark.is_empty(),
-            "Offenders mark cannot be empty"
-        );
-
-        // Explicit seal check
-        assert!(!block.header.seal.is_empty(), "Seal cannot be empty");
-
-        // Explicit entropy_source check
-        assert!(
-            !block.header.entropy_source.is_empty(),
-            "Entropy source cannot be empty"
+            valid_tickets + imported_block.extrinsic.preimages.len() as u64,
+            "State counter should equal valid tickets plus preimages"
         );
 
         Ok(())

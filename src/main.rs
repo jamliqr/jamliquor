@@ -1,8 +1,5 @@
-mod importer;
-mod schema;
-
 use anyhow::Result;
-use importer::Importer;
+use jamliquor::Importer;
 use std::path::PathBuf;
 
 fn main() -> Result<()> {

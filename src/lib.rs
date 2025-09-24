@@ -2,6 +2,7 @@
 //!
 //! This platform focuses on lightweight design, decentralization, and post-quantum cryptography.
 
+pub mod coretime;
 pub mod importer;
 pub mod schema;
 pub mod state;

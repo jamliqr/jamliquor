@@ -58,6 +58,14 @@ pub enum BlockchainError {
     #[error("Invalid preimage: {reason}")]
     InvalidPreimage { reason: String },
 
+    /// CoreTime verification failed
+    #[error("CoreTime validation error: {reason}")]
+    CoreTimeValidationError { reason: String },
+
+    /// CoreTime accounting balance error
+    #[error("CoreTime balance error: {reason}")]
+    CoreTimeBalanceError { reason: String },
+
     /// I/O error
     #[error("I/O error: {0}")]
     IoError(#[from] std::io::Error),
@@ -418,7 +426,10 @@ mod hex {
     }
 
     // Serialize an OpaqueHash as a hex string with 0x prefix
-    pub fn serialize_opaque_hash<S>(hash: &super::OpaqueHash, serializer: S) -> Result<S::Ok, S::Error>
+    pub fn serialize_opaque_hash<S>(
+        hash: &super::OpaqueHash,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
@@ -475,19 +486,19 @@ mod hex {
         let values: Vec<Value> = Deserialize::deserialize(deserializer)?;
         values
             .into_iter()
-            .map(|value| {
-                match value {
-                    Value::String(s) => decode_hash_string::<D>(&s),
-                    Value::Object(map) => {
-                        let hex_value = map
-                            .get("ed25519")
-                            .or_else(|| map.get("bandersnatch"))
-                            .and_then(|v| v.as_str())
-                            .ok_or_else(|| D::Error::custom("expected ed25519 or bandersnatch hex string"))?;
-                        decode_hash_string::<D>(hex_value)
-                    }
-                    _ => Err(D::Error::custom("expected hex string or validator object")),
+            .map(|value| match value {
+                Value::String(s) => decode_hash_string::<D>(&s),
+                Value::Object(map) => {
+                    let hex_value = map
+                        .get("ed25519")
+                        .or_else(|| map.get("bandersnatch"))
+                        .and_then(|v| v.as_str())
+                        .ok_or_else(|| {
+                            D::Error::custom("expected ed25519 or bandersnatch hex string")
+                        })?;
+                    decode_hash_string::<D>(hex_value)
                 }
+                _ => Err(D::Error::custom("expected hex string or validator object")),
             })
             .collect()
     }

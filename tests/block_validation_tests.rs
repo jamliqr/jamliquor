@@ -1,8 +1,8 @@
 use anyhow::Result;
+use jamliquor::importer::Importer;
 use jamliquor::schema::{
     Block, BlockchainError, Extrinsic, Header, OpaqueHash, Preimage, TicketBody, TicketEnvelope,
 };
-use jamliquor::importer::Importer;
 use std::fs::File;
 use tempfile::tempdir;
 

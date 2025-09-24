@@ -1,3 +1,4 @@
+use crate::coretime::CoreTimeLedger;
 use crate::schema::{Block, BlockchainError, Extrinsic, Header, State};
 use anyhow::{Context, Result};
 use log::{debug, info, trace, warn};
@@ -9,6 +10,7 @@ pub struct Importer {
     state: State,
     last_block_hash: Option<[u8; 32]>,
     last_state_root: Option<[u8; 32]>,
+    coretime: CoreTimeLedger,
 }
 
 impl Importer {
@@ -17,6 +19,7 @@ impl Importer {
             state: State::new(),
             last_block_hash: None,
             last_state_root: None,
+            coretime: CoreTimeLedger::default(),
         }
     }
 
@@ -24,6 +27,10 @@ impl Importer {
     pub fn set_initial_state(&mut self, last_hash: [u8; 32], last_root: [u8; 32]) {
         self.last_block_hash = Some(last_hash);
         self.last_state_root = Some(last_root);
+    }
+
+    pub fn coretime(&self) -> &CoreTimeLedger {
+        &self.coretime
     }
 
     /// Import and validate a block from a given path
@@ -70,7 +77,10 @@ impl Importer {
     // 3. Transaction validation
     /// 4. State transition validation
     fn validate_and_apply_block(&mut self, block: &Block) -> Result<()> {
-        debug!("Starting validation for block at slot {}", block.header.slot);
+        debug!(
+            "Starting validation for block at slot {}",
+            block.header.slot
+        );
 
         // 1. Validate block structure
         self.validate_block_structure(block)?;
@@ -81,11 +91,25 @@ impl Importer {
         // 3. Validate all transactions and their proofs
         self.validate_extrinsic(&block.header, &block.extrinsic)?;
 
+        // 3b. Validate CoreTime accounting and guarantees
+        self.coretime.validate_and_apply(
+            block.header.slot as u64,
+            &block.extrinsic.guarantees,
+            &block.extrinsic.assurances,
+            &block.extrinsic.disputes,
+        )?;
+
         // 4. Apply state transition
-        trace!("Applying state transition for block at slot {}", block.header.slot);
+        trace!(
+            "Applying state transition for block at slot {}",
+            block.header.slot
+        );
         self.state.apply_block(block)?;
 
-        debug!("Successfully validated and applied block at slot {}", block.header.slot);
+        debug!(
+            "Successfully validated and applied block at slot {}",
+            block.header.slot
+        );
         Ok(())
     }
 
@@ -96,26 +120,31 @@ impl Importer {
             return Err(BlockchainError::InvalidSlot {
                 last_slot: 0,
                 current_slot: 0,
-            }.into());
+            }
+            .into());
         }
 
         // Validate extrinsic structure
-        if block.extrinsic.tickets.len() != block.header.tickets_mark.as_ref().map_or(0, |tm| tm.len()) {
+        if block.extrinsic.tickets.len()
+            != block.header.tickets_mark.as_ref().map_or(0, |tm| tm.len())
+        {
             return Err(BlockchainError::InvalidBlockStructure {
                 reason: format!(
                     "Ticket count mismatch: header marks {} tickets but found {}",
                     block.header.tickets_mark.as_ref().map_or(0, |tm| tm.len()),
                     block.extrinsic.tickets.len()
-                )
-            }.into());
+                ),
+            }
+            .into());
         }
 
         // Validate preimages if any
         for (i, preimage) in block.extrinsic.preimages.iter().enumerate() {
             if preimage.blob.is_empty() {
                 return Err(BlockchainError::InvalidPreimage {
-                    reason: format!("Preimage at index {} has empty blob", i)
-                }.into());
+                    reason: format!("Preimage at index {} has empty blob", i),
+                }
+                .into());
             }
         }
 
@@ -134,7 +163,11 @@ impl Importer {
         let current_slot = u64::from(header.slot);
         let last_slot = self.state.get_last_slot();
 
-        trace!("Validating header for slot {} (last slot: {})", current_slot, last_slot);
+        trace!(
+            "Validating header for slot {} (last slot: {})",
+            current_slot,
+            last_slot
+        );
 
         // Slot validation
         if current_slot <= last_slot {
@@ -181,9 +214,10 @@ impl Importer {
 
         // Entropy validation
         // Validate entropy source (result is ignored as we only care about the error case)
-        let _ = header.validate_entropy()
+        let _ = header
+            .validate_entropy()
             .map_err(|e| BlockchainError::InvalidEntropy {
-                reason: format!("Invalid entropy source: {}", e)
+                reason: format!("Invalid entropy source: {}", e),
             })?;
 
         trace!("Entropy validation passed for slot {}", current_slot);
@@ -216,7 +250,10 @@ impl Importer {
     /// - Signature verification
     /// - Transaction inclusion proofs
     fn validate_extrinsic(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
-        debug!("Validating extrinsic with {} tickets", extrinsic.tickets.len());
+        debug!(
+            "Validating extrinsic with {} tickets",
+            extrinsic.tickets.len()
+        );
 
         // Validate tickets against marks if marks exist
         if let Some(tickets_mark) = &header.tickets_mark {
@@ -227,58 +264,72 @@ impl Importer {
                         "Ticket count mismatch: expected {}, got {}",
                         tickets_mark.len(),
                         extrinsic.tickets.len()
-                    )
-                }.into());
+                    ),
+                }
+                .into());
             }
 
             // Validate each ticket against its mark
-            for (i, (ticket, mark)) in extrinsic.tickets.iter().zip(tickets_mark.iter()).enumerate() {
+            for (i, (ticket, mark)) in extrinsic
+                .tickets
+                .iter()
+                .zip(tickets_mark.iter())
+                .enumerate()
+            {
                 if ticket.attempt != mark.attempt {
                     return Err(BlockchainError::TicketValidationError {
                         reason: format!(
                             "Ticket {} attempt mismatch: expected {}, got {}",
                             i, mark.attempt, ticket.attempt
-                        )
-                    }.into());
+                        ),
+                    }
+                    .into());
                 }
 
                 // Additional ticket validation
                 if let Err(e) = ticket.validate() {
                     return Err(BlockchainError::TicketValidationError {
-                        reason: format!("Invalid ticket at index {}: {}", i, e)
-                    }.into());
+                        reason: format!("Invalid ticket at index {}: {}", i, e),
+                    }
+                    .into());
                 }
             }
         } else if !extrinsic.tickets.is_empty() {
             return Err(BlockchainError::TicketValidationError {
-                reason: "Tickets present but no tickets mark in header".to_string()
-            }.into());
+                reason: "Tickets present but no tickets mark in header".to_string(),
+            }
+            .into());
         }
 
         // Validate preimages
         for (i, preimage) in extrinsic.preimages.iter().enumerate() {
             if preimage.requester == 0 {
                 return Err(BlockchainError::InvalidPreimage {
-                    reason: format!("Preimage at index {} has invalid requester ID 0", i)
-                }.into());
+                    reason: format!("Preimage at index {} has invalid requester ID 0", i),
+                }
+                .into());
             }
         }
 
         // Validate extrinsic hash commitment in header
         self.validate_extrinsic_hash(header, extrinsic)?;
 
-        debug!("Extrinsic validation passed with {} tickets and {} preimages",
-              extrinsic.tickets.len(), extrinsic.preimages.len());
+        debug!(
+            "Extrinsic validation passed with {} tickets and {} preimages",
+            extrinsic.tickets.len(),
+            extrinsic.preimages.len()
+        );
 
         Ok(())
     }
 
     fn validate_extrinsic_hash(&self, header: &Header, extrinsic: &Extrinsic) -> Result<()> {
-        let computed_hash = extrinsic
-            .compute_hash()
-            .map_err(|e| BlockchainError::InvalidInclusionProof {
-                reason: format!("Failed to serialize extrinsic for hashing: {}", e),
-            })?;
+        let computed_hash =
+            extrinsic
+                .compute_hash()
+                .map_err(|e| BlockchainError::InvalidInclusionProof {
+                    reason: format!("Failed to serialize extrinsic for hashing: {}", e),
+                })?;
 
         if header.extrinsic_hash.as_bytes() != &computed_hash {
             return Err(BlockchainError::InvalidInclusionProof {
@@ -291,10 +342,7 @@ impl Importer {
             .into());
         }
 
-        trace!(
-            "Extrinsic hash validated: {}",
-            hex::encode(computed_hash)
-        );
+        trace!("Extrinsic hash validated: {}", hex::encode(computed_hash));
 
         Ok(())
     }

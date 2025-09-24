@@ -95,7 +95,7 @@
           "id": 3,
           "title": "Implement CoreTime verification logic",
           "description": "Develop the verification system for CoreTime accounting within blocks",
-          "status": "pending",
+          "status": "done",
           "dependencies": [
             1,
             2

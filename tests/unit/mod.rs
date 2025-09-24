@@ -1,4 +1,4 @@
-#[cfg(test)]
+mod coretime_tests;
 mod importer_tests;
 
 #[test]

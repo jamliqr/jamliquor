@@ -7,7 +7,6 @@ use anyhow::Result;
 use jamliquor::state::State;
 use jamliquor::Importer;
 
-use crate::utils;
 use jamliquor::schema::{
     Block, Extrinsic, Header, OpaqueHash, Preimage, TicketBody, TicketEnvelope,
 };

@@ -45,8 +45,9 @@ dev-debug.log
 # Dependency directories
 node_modules/
 # Editor directories and files
-.idea
-.vscode
+.idea/
+.vscode/
+.windsurf/
 *.suo
 *.ntvs*
 *.njsproj

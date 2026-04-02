@@ -1,6 +1,6 @@
 # JamLiquor Revival TODO
-**Date:** 2026-04-01  
-**Last active dev:** ~September 2025  
+**Date:** 2026-04-01
+**Last active dev:** ~September 2025
 **Gap:** ~7 months
 
 ---
@@ -27,7 +27,7 @@ The JAM ecosystem did not stand still.
 ---
 
 ## Phase 0: Audit Before Anything Else
-**Estimated time: 1–2 weeks**  
+**Estimated time: 1–2 weeks**
 **Do not write new code until this is complete.**
 
 ### 0.1 Determine current Gray Paper version alignment
@@ -90,7 +90,7 @@ cargo tree | grep polkavm
 ---
 
 ## Phase 1: Gray Paper v0.8 Re-alignment
-**Estimated time: 3–5 weeks**  
+**Estimated time: 3–5 weeks**
 **Prerequisite: Phase 0 complete**
 
 This is the most unglamorous but most critical phase. Every hour spent here saves two hours in Phase 2.
@@ -126,7 +126,7 @@ SAFROLE has been refined significantly. The Ring VRF input construction and tick
 ---
 
 ## Phase 2: Complete the Importer (M1 Core)
-**Estimated time: 4–6 weeks**  
+**Estimated time: 4–6 weeks**
 **Prerequisite: Phase 1 complete**
 
 This completes tasks 2.4, 2.5, and 2.6 from the original plan — but now grounded against v0.8.
@@ -175,7 +175,7 @@ Section 10 of the Gray Paper — Disputes, Verdicts, and Judgements.
 ---
 
 ## Phase 3: Minimal PVM Integration (M1 Requirement)
-**Estimated time: 3–4 weeks**  
+**Estimated time: 3–4 weeks**
 **Prerequisite: Phase 2 complete**
 
 M1 now requires PVM to boot and exercise host calls. This is not optional. Use the upstream `polkavm` crate — do not write a PVM from scratch at this stage. A custom PVM is required for M4/M5 (the prize paths), but for M1 the spec allows third-party PVM.
@@ -222,7 +222,7 @@ GP v0.7 added detailed pseudocode for PVM host calls. These are the interface be
 ---
 
 ## Phase 4: M1 Submission Preparation
-**Estimated time: 1–2 weeks**  
+**Estimated time: 1–2 weeks**
 **Prerequisite: Phases 1–3 complete**
 
 ### 4.1 Conformance tool integration
@@ -251,7 +251,7 @@ Per JAM Prize rules, cleanroom provenance must be demonstrable.
 ---
 
 ## Phase 5: Authorer (M2)
-**Estimated time: 6–10 weeks**  
+**Estimated time: 6–10 weeks**
 **Prerequisite: M1 submission accepted**
 
 M2 = "Fully conformant and can produce blocks (including networking, off-chain)."
@@ -284,7 +284,7 @@ JAM uses QUIC for networking. No gossip — point-to-point with grid-diffusion f
 ---
 
 ## Phase 6: Custom PVM (M3/M4 Path)
-**Estimated time: 8–16 weeks**  
+**Estimated time: 8–16 weeks**
 **Prerequisite: M2 complete**
 
 This is the path to the full prize. A custom PVM is required for M4 (100,000 DOT). It must achieve Kusama-level performance (M3) and Polkadot-level performance (M4).

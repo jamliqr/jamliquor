@@ -1,6 +1,5 @@
 use ::hex::FromHexError;
 use blake2b_simd::Params as Blake2bParams;
-use log::error;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -402,6 +401,7 @@ mod hex {
     use serde::{self, Deserialize, Deserializer, Serializer};
 
     // Serialize a byte array as a hex string with 0x prefix
+    #[allow(dead_code)]
     pub fn serialize_bytes<S>(bytes: &[u8; 32], serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,

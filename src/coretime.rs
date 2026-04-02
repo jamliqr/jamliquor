@@ -239,10 +239,7 @@ impl CoreTimeLedger {
         self.last_block_slot = Some(block_slot);
 
         for (core_index, consumed) in per_block_usage {
-            let usage = self
-                .per_core_usage
-                .entry(core_index)
-                .or_insert_with(CoreUsage::default);
+            let usage = self.per_core_usage.entry(core_index).or_default();
             usage.total_consumed = usage.total_consumed.checked_add(consumed).ok_or_else(|| {
                 BlockchainError::CoreTimeBalanceError {
                     reason: format!("Core {} total consumption overflow", core_index),

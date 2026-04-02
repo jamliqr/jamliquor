@@ -1,0 +1,46 @@
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "## \\[Unreleased\\]"
+replace = "## [{{version}}] - {{date}}"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "ReleaseDate"
+replace = "{{date}}"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "\\[unreleased\\]: https://github.com/jamliqr/jamliquor/compare/v[a-z0-9\\.]+\\.\\.\\.HEAD"
+replace = "[unreleased]: https://github.com/jamliqr/jamliquor/compare/{{prev_version}}...HEAD"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "\\.\\.\\.HEAD"
+replace = "...{{tag_name}}"
+
+[[pre-release-replacements]]
+file = "CHANGELOG.md"
+search = "\\.\\.\\.v[a-z0-9\\.]+"
+replace = "...{{tag_name}}"
+
+[[pre-release-replacements]]
+file = "Cargo.toml"
+search = "^version = .*"
+replace = "version = \"{{version}}\""
+
+[config]
+allow_dirty = false
+cargo_command = "cargo"
+disable_publish = false
+disable_push = false
+disable_tag = false
+enable_all_features = false
+no_dev_version = false
+pre_release_commit_message = "chore: release version {{version}}"
+pre_release_hook = { command = "git-cliff", args = ["--tag", "{{tag_name}}", "--output", "CHANGELOG.md"] }
+publish_commit_message = "chore: publish version {{version}}"
+sign_commit = false
+sign_tag = false
+tag = true
+tag_name = "v{{version}}"
+tag_message = "Release version {{version}}"

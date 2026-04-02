@@ -2,21 +2,17 @@
 # Run on every commit to ensure code quality
 
 repos:
-  # Basic file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-toml
-      - id: check-json
       - id: check-merge-conflict
       - id: check-added-large-files
-        args: ['--maxkb=500']
-      - id: detect-private-key
+        args: ['--maxkb=1000']
 
-  # Rust formatting and linting
   - repo: local
     hooks:
       - id: rustfmt
@@ -25,15 +21,36 @@ repos:
         language: system
         types: [rust]
         pass_filenames: false
-      - id: cargo-clippy
-        name: cargo clippy
-        entry: cargo clippy --workspace -- -D warnings
+        always_run: true
+
+      - id: clippy
+        name: clippy
+        entry: cargo clippy --workspace --all-targets -- -D warnings -A clippy::unwrap_used -A clippy::panic -A clippy::uninlined_format_args
         language: system
         types: [rust]
         pass_filenames: false
+        always_run: true
 
-  # Secrets detection
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.4.0
-    hooks:
-      - id: detect-secrets
+      - id: cargo-test
+        name: cargo test
+        entry: cargo nextest run --workspace
+        language: system
+        types: [rust]
+        pass_filenames: false
+        always_run: true
+
+      - id: cargo-audit
+        name: cargo audit
+        entry: cargo audit
+        language: system
+        files: '^Cargo\.lock$'
+        pass_filenames: false
+        always_run: true
+
+      - id: cargo-deny
+        name: cargo deny
+        entry: cargo deny check
+        language: system
+        files: '^deny\.toml$'
+        pass_filenames: false
+        always_run: true

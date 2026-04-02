@@ -312,10 +312,11 @@ pub struct TicketEnvelope {
 
 impl TicketEnvelope {
     pub fn validate(&self) -> Result<(), anyhow::Error> {
-        // Validate signature length (should be 64 bytes for ed25519)
-        if self.signature.len() != 64 {
+        // Validate signature length - accept both ed25519 (64) and Bandersnatch (variable)
+        // TODO: Implement proper signature validation based on ticket type
+        if self.signature.len() < 64 {
             return Err(anyhow::anyhow!(
-                "Invalid signature length: {} (expected 64)",
+                "Invalid signature length: {} (minimum 64)",
                 self.signature.len()
             ));
         }

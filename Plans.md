@@ -21,7 +21,7 @@ Goal: every public-facing doc reflects the pivoted identity. No doc may claim wh
 | 1.5 | Replace `MILESTONE.md` content with the MVP-1/2/3 roadmap and dates from spec.md §4; drop Authorer/PolkaVM/Extensions milestones [tdd:skip:docs-only] | MILESTONE.md lists exactly MVP-1, MVP-2/3, and stop conditions; no retired milestones remain | 1.1 | cc:done |
 | 1.6 | Supersede `TODO.md`: move to `docs/archive/TODO-2026-04.md` with a header banner pointing to Plans.md; leave a stub `TODO.md` pointer or remove per repo convention [tdd:skip:docs-only] | Root no longer presents the 2026-04 plan as current; archive copy intact; Plans.md referenced | 1.1 | cc:done |
 | 1.7 | Alignment pass over remaining docs (`SUMMARY.md`, `index.md`, `ARCHITECTURE.md`, `EDGE.md`, `NETWORK.md`, `DECENTRALIZATION.md`, `SIMPLICITY.md`, `CONFORMATION.md`, `building.md`): update nav, add status banners to aspirational content, remove five-pillar framing [tdd:skip:docs-only] | mdBook nav builds without dead links; no doc presents AI/PQC/networking as current scope | 1.2, 1.3, 1.4, 1.5 | cc:done |
-| 1.8 | Commit Phase 1 as a single reviewed docs commit | `git log` shows one docs commit; CI green; no `src/` changes included | 1.2–1.7 | cc:wip |
+| 1.8 | Commit Phase 1 as a single reviewed docs commit | `git log` shows one docs commit; CI green; no `src/` changes included | 1.2–1.7 | cc:done [a40fc59] |
 
 ## Phase 2: Legacy hygiene + jam-core scaffold
 

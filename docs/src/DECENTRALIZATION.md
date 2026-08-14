@@ -1,5 +1,7 @@
 # 🌐 DECENTRALIZATION.md — Real Decentralization, Not a Buzzword
 
+> **Status:** Pre-pivot vision doc. The community-mesh / networking scenarios below are speculative — networking is explicitly out of current scope (see [`spec.md`](../../spec.md) §2). The one piece of this vision under active evidence-gathering is the hardware-cost claim, tested narrowly via MVP-2/3 benchmarks, not the full deployment story.
+
 ## 🧭 Principle: Decentralization Must Be Real
 
 > If your blockchain relies on a handful of data centers, it’s not decentralized.

@@ -1,10 +1,10 @@
 # JamLiquor
 
-#### **A Cleanroom JAM Client with Edge, AI, and PQC Extensions**
+#### A cleanroom JAM protocol research core, targeting binary-vector conformance and constrained-hardware benchmarks
 
-_Lightweight. Adaptive. Quantum-Resistant. JAM-native._
+_Lightweight. JAM-native._ — both goals to be earned via CI evidence, not assumed.
 
-![License](https://img.shields.io/badge/license-GPL_3.0-blue.svg) ![Language](https://img.shields.io/badge/language-Rust-orange.svg) [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/jamliqr/e21c2f06f08f5795f50860fcbbbeb1f3/raw/jamliquor-coverage.json)](https://github.com/jamliqr/jamliquor/actions) ![Status](https://img.shields.io/badge/status-Experimental-lightgrey) [![Docs](https://img.shields.io/badge/docs-online-blueviolet)](https://yourusername.github.io/jamliquor/) [![Build Status](https://github.com/jamliqr/jamliquor/actions/workflows/coverage.yml/badge.svg)](https://github.com/jamliqr/jamliquor/actions)
+> **Status (2026-08):** JamLiquor completed a full [2026 reassessment](./docs/REASSESSMENT/README.md) against the current JAM ecosystem. Outcome: **PIVOT**. The original five-pillar vision (Lightweight, Adaptive/AI, Quantum-Resistant, Decentralized, Simple) is retired to two claims that must be proven in CI: **Lightweight** and **JAM-native**. See [`spec.md`](./spec.md) for the binding product contract and [`DECISION.md`](./DECISION.md) for the full rationale.
 
 ## 📚 Table of Contents
 
@@ -22,43 +22,36 @@ _Lightweight. Adaptive. Quantum-Resistant. JAM-native._
 12. [Key References](#-key-references)
 13. [Contribute](#-contribute)
 14. [License](#-license)
-15. [Join the Movement](#-join-the-movement)
 
 ---
 
 ## 📌 What is JamLiquor?
 
-**JamLiquor** is a purpose-driven, cleanroom **JAM Protocol implementation**, engineered from scratch in Rust. It is designed to:
+**JamLiquor** is a cleanroom **JAM protocol research implementation**, engineered from scratch in Rust. The current, evidence-gated goal is:
 
-- ✅ **Conform to JAM's execution model** and participate in the JAM ecosystem
-- ✅ **Run on edge hardware** like Milk-V Duo and Raspberry Pi Zero 2 W
-- ✅ **Support modular innovation**, including AI inference and PQ cryptography
+- ✅ **Prove deterministic agreement** with the official `w3f/jamtestvectors` binary codec + `stf/safrole` vectors (MVP-1, due 2026-11-15)
+- ✅ **Measure**, not assume, JAM's resource cost on ARM64/RISC-V single-board computers (MVP-2/3, due 2027-02-15)
+- ❌ It is **not** a validator, a full client, a JAM Prize entrant, or a production node. Do not use it as one.
 
-JamLiquor is not a fork. It's not a derivative. It is a **JAM-native node with radical modularity**.
+JamLiquor is not a fork and reuses no non-auditable JAM source code — see [Cleanroom Policy](#-cleanroom-policy).
 
 ---
 
 ## 🧭 Core Principles
 
-### 1. **Lightweight by Default**
+Two claims survive the 2026 reassessment. Both are **hypotheses under test**, not settled facts — see [`spec.md`](./spec.md) for the gates that must pass before either is asserted as true.
 
-Runs on ≤128MB RAM and ≤1GHz CPUs. JAM should live at the edge.
+### 1. Lightweight (unproven — gated by MVP-2/3)
 
-### 2. **Real Decentralization**
+The central open question: what does JAM actually cost on constrained hardware, and which JAM roles fit on a ≤512 MB SBC? No client in the ecosystem has published this. No numbers exist yet in this repo either — see [Project Status](#-project-status).
 
-No validator elitism. JamLiquor is designed for community-run nodes.
+### 2. JAM-native (unproven — gated by MVP-1)
 
-### 3. **Adaptability with AI**
+A conformant subset (binary codec + Safrole state transition) that provably agrees with the official test vectors, not a JSON-fixture importer that merely contains JAM-related code.
 
-AI inference modules allow the node to adapt in real time—on-chain and off-chain.
+### Retired
 
-### 4. **Quantum-Resistance First**
-
-Includes opt-in modules for Dilithium, Kyber, and XMSS.
-
-### 5. **Simplicity is Strength**
-
-Minimalist, auditable, and modular. No unnecessary cryptographic gymnastics.
+AI inference ("Adaptive") and post-quantum cryptography ("Quantum-Resistant") were evaluated and dropped from the project identity — both are application-layer ideas with no JAM-native technical justification today. One research note each is kept for the record: [`docs/src/research-notes.md`](./docs/src/research-notes.md).
 
 ---
 
@@ -95,9 +88,9 @@ cargo clippy --all-targets --all-features
 
 ## 🚀 Getting Started
 
-### Quick Demo (Importer)
+### Quick Demo (legacy importer)
 
-Run the importer prototype against the bundled JAM block fixture:
+This runs the **legacy JSON-fixture importer** — pre-pivot code, kept only until `jam-core` (the binary-codec conformance core described in [`spec.md`](./spec.md)) replaces it. It does not exercise binary codec or STF conformance vectors.
 
 ```bash
 cargo run --release
@@ -108,7 +101,7 @@ This loads `tests/vectors/codec/data/block.json` and outputs:
 
 - Header details (slot, author index, entropy source)
 - Ticket counters from `state::State`
-- State transition status
+- State transition status (structural checks only — not GP-conformant STF)
 
 ### Explore as a Library
 
@@ -123,39 +116,22 @@ fn main() -> anyhow::Result<()> {
 }
 ```
 
-See the minimalist entry point in `src/main.rs` and additional guides in [`docs/src/README.md`](./docs/src/README.md).
+See `src/main.rs` and additional guides in [`docs/src/README.md`](./docs/src/README.md).
 
 ---
 
 ## 🔁 Workflows
 
-### Node Operation (Preview)
-
-1. Provision a supported edge target (see [Edge Targets](#-edge-targets)).
-2. Install cross targets:
-   ```bash
-   rustup target add riscv64gc-unknown-linux-gnu
-   rustup target add armv7-unknown-linux-gnueabihf
-   ```
-3. Cross-compile the importer:
-   ```bash
-   cargo build --release --target riscv64gc-unknown-linux-gnu
-   ```
-4. Deploy the binary plus fixture data under `tests/vectors/` to the device.
-5. Run the importer offline while networking and authoring modules mature.
-
 ### Development Loop
 
-1. Review roadmap items in [`docs/src/MILESTONE.md`](./docs/src/MILESTONE.md).
+1. Review the roadmap in [`Plans.md`](./Plans.md) and [`docs/src/MILESTONE.md`](./docs/src/MILESTONE.md).
 2. Start the watch-based loop:
    ```bash
    cargo watch -x "test --lib" -x "fmt"
    ```
-3. Implement features in `src/importer.rs`, `src/state.rs`, or new modules under `extensions/`.
+3. Legacy importer work lives in `src/importer.rs` / `src/state.rs`. New conformance work lands under the `jam-core` workspace crate (`codec`, `crypto`, `safrole` modules) once scaffolded — see Plans.md Phase 2.
 4. Update fixtures in `tests/vectors/` to cover new scenarios.
-5. Run `cargo test --all-targets` and `cargo bench` (optional) before opening a PR.
-
-Additional workflows for AI, PQC, and lightweight profiles live in `docs/src/` (e.g., [`AI.md`](./docs/src/AI.md), [`PQC.md`](./docs/src/PQC.md), [`EDGE.md`](./docs/src/EDGE.md)).
+5. Run `cargo test --all-targets` before opening a PR.
 
 ---
 
@@ -163,7 +139,6 @@ Additional workflows for AI, PQC, and lightweight profiles live in `docs/src/` (
 
 - **Logging**: Set `RUST_LOG=<level>` when running (`env_logger` backend).
 - **Input paths**: Pass alternate block files to `Importer::import_block` or adjust fixtures in `tests/vectors/`.
-- **Environment profiles**: Capture board-specific notes in [`docs/src/EDGE.md`](./docs/src/EDGE.md). A consolidated `config.toml` will land alongside future networking modules.
 
 Cleanroom practices and configuration expectations are documented in [`docs/src/CLEANROOM.md`](./docs/src/CLEANROOM.md).
 
@@ -173,9 +148,9 @@ Cleanroom practices and configuration expectations are documented in [`docs/src/
 
 - **Unit & integration tests**: `cargo test --all-targets`
 - **Property tests**: See `tests/` for `proptest`-based suites.
-- **Benchmarks**: `cargo bench --bench core_benchmarks`
 - **Coverage**: GitHub Actions publishes coverage; locally run `cargo llvm-cov --all-features` (requires `cargo-llvm-cov`).
 - **Cross-compilation checks**: Follow [`docs/src/building.md`](./docs/src/building.md) and extend CI when adding new targets.
+- **Conformance vectors**: tracked in [`docs/src/CONFORMATION.md`](./docs/src/CONFORMATION.md); the vector pin (v0.7.1, `1dc503a`) is frozen for the MVP-1 window per [`spec.md`](./spec.md).
 
 ---
 
@@ -191,38 +166,39 @@ Cleanroom practices and configuration expectations are documented in [`docs/src/
 
 - Enable verbose logging: `RUST_LOG=debug cargo run`
 - Verify fixture paths and JSON structure in `tests/vectors/`
-- Ensure at least 128 MB RAM on edge devices.
 
-### Networking & Extensions
-
-- Networking modules remain experimental—track progress in [`docs/src/NETWORK.md`](./docs/src/NETWORK.md).
-- PQC and AI extensions live under `extensions/`; verify feature availability before enabling in production prototypes.
-
-For unresolved issues, [open an issue](https://github.com/jamliqr/jamliquor/issues) with logs, hardware profile, and reproduction steps.
+For unresolved issues, [open an issue](https://github.com/jamliqr/jamliquor/issues) with logs and reproduction steps.
 
 ---
 
 ## 🚀 Project Status
 
-| Component          | Description                           | Status          |
-| ------------------ | ------------------------------------- | --------------- |
-| `importer/`        | JAM-compliant block/state validation  | 🟡 In Progress  |
-| `authorer/`        | SAFROLE-based block production engine | ⚪ Planned      |
-| `vm/`              | PolkaVM (RISC-V) execution backend    | ⚪ Planned      |
-| `extensions/pqc/`  | PQ-safe signatures (Dilithium)        | ⚪ Experimental |
-| `extensions/ai/`   | TinyML-based inference at edge        | ⚪ Experimental |
-| `extensions/lite/` | 128MB RAM profile w/ minimal overhead | ⚪ Experimental |
+Status reflects what is **currently green in CI**, not aspiration — see [`spec.md`](./spec.md) §8 (claims policy).
 
-For detailed roadmap, milestones, and technical specifications, see our [Milestone Documentation](./docs/src/MILESTONE.md).
+| Component | Description | Status |
+| --- | --- | --- |
+| `src/` (legacy importer) | JSON-fixture parser, structural checks only, pre-pivot | 🟡 Kept until superseded, then removed (Plans.md Phase 2) |
+| `jam-core/codec` | Binary JAM codec vs. official vectors | ⚪ Not started (Plans.md Phase 3) |
+| `jam-core/crypto` | Ed25519 + Bandersnatch ring VRF verification | ⚪ Not started (Plans.md Phase 4) |
+| `jam-core/safrole` | Safrole STF vs. `stf/safrole` vectors | ⚪ Not started (Plans.md Phase 4) |
+| Edge/SBC benchmarks | Peak RAM, binary size, vectors/sec on ARM64 + RISC-V | ⚪ Not started (Plans.md Phase 5); zero measurements exist today |
+
+`jam-core/trie` (`spec.md` §6's fourth module) is deliberately unscheduled — it sequences after Safrole and has no Plans.md phase yet; it is out of scope for MVP-1.
+
+No PVM, authorer, networking, PQC, or AI work is planned inside this repo's current scope — see `spec.md` §2 for the full non-goals list.
+
+For task-level detail, see [`Plans.md`](./Plans.md). For historical context, see [`docs/REASSESSMENT/`](./docs/REASSESSMENT/README.md) and the archived pre-pivot plan at [`docs/archive/TODO-2026-04.md`](./docs/archive/TODO-2026-04.md).
 
 ---
 
 ## 🔧 Edge Targets
 
-- Milk-V Duo (RISC-V, 64MB RAM)
-- Pine64 Ox64 (RISC-V)
-- Raspberry Pi Zero 2 W (ARM)
-- StarFive VisionFive 2 (RISC-V, quad-core)
+Named as **candidate** targets for the MVP-2/3 benchmark milestone — not yet verified. No binary-size, RAM, or startup measurement has been recorded on any of these as of 2026-08.
+
+- Milk-V Duo (RISC-V, 64MB RAM) — Tier C, at most header/ticket verification per `spec.md`
+- Pine64 Ox64 (RISC-V) — Tier C
+- Raspberry Pi Zero 2 W (ARM) — Tier A/B boundary
+- StarFive VisionFive 2 (RISC-V, quad-core) — Tier B
 
 ---
 
@@ -232,79 +208,31 @@ JamLiquor is built:
 
 - Without reuse of non-auditable JAM source code
 - With public commit history and architecture provenance
-- To be compatible with JAM Prize auditing
 
-See: [`docs/cleanroom.md`](./docs/cleanroom.md)
+See: [`docs/src/CLEANROOM.md`](./docs/src/CLEANROOM.md)
 
 ---
 
 ## 📚 Key References
 
-- [JamLiquor Manifesto (v0.2.0)](./MANIFESTO.md)
-- [JAM Protocol Graypaper](https://github.com/gavofyork/graypaper)
-- [PolkaVM](https://github.com/paritytech/polkavm)
-- [JAM Prize Specification](https://hackmd.io/@polkadot/jamprize)
+- [JamLiquor product contract (spec.md)](./spec.md)
+- [2026 Reassessment & Decision](./docs/REASSESSMENT/README.md)
+- [JAM Protocol Graypaper](https://graypaper.com)
+- [w3f/jamtestvectors (conformance authority)](https://github.com/w3f/jamtestvectors)
 
 ---
 
 ## 🤝 Contribute
 
-We welcome contributors with passion for:
+We welcome contributors interested in:
 
-- JAM internals and protocol fidelity
-- Embedded Rust, RISC-V, and minimal blockchain clients
-- Cryptography (PQC, VRFs) and inference (TinyML, Rust ML)
+- JAM binary codec and Safrole state-transition conformance
+- Embedded Rust and RISC-V/ARM cross-compilation
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) to get started.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) and the curated good-first-issues (from Plans.md Phase 2 onward) to get started.
 
 ---
 
 ## 🛡 License
 
-Licensed under **GPL-3.0**. Cleanroom declarations and IP policy documented in [Cleanroom Policy](./docs/CLEANROOM.md)
-
----
-
-## 🚀 Join the Movement
-
-JamLiquor is a JAM client with purpose.
-Compliant by design. Modular by philosophy. Edge-ready by default.
-
-**We don't fork the future. We build it.**
-
-🧪 Disclaimer: A Dream Under Construction
-
-JamLiquor is a bold claim. It reads like an engineering utopia. Many may see it as naïve or speculative.
-
-And they're not wrong.
-
-This work is:
-
-🌱 Experimental
-
-🧪 Untested at scale
-
-🧩 Composed of speculative modules
-
-But:
-
-All real systems begin as dreams.
-
-JamLiquor is:
-
-🚧 A sandbox of ideas and engineering
-
-🔁 Built by iteration: brake, fail, fix, retry
-
-🙋 In need of true believers who can build with us
-
-> **⚠ Warning**
->
-> We don't promise it will work tomorrow. But we are building it every day to make it work.
->
-> - **If it works**: the credit belongs to _everyone who dared_ to try.
-> - **If it fails**: we'll have _learned more_ than most systems ever attempt.
->
-> This is not just software. It's a belief in what's possible.
-
-🤝 **Welcome to JamLiquor. Let's tinker toward something impossible.**
+Licensed under **GPL-3.0**. Cleanroom declarations and IP policy documented in [Cleanroom Policy](./docs/src/CLEANROOM.md).

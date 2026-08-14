@@ -1,5 +1,7 @@
 # 🧩 ARCHITECTURE.md — Simplicity Is Strength
 
+> **Status:** Pre-pivot design vision, kept for context. The five-layer sketch below (`importer/`, `authorer/`, `vm/`, `extensions/`, `net/`) is aspirational and not the current build plan. `extensions/pqc` and `extensions/ai` are retired — see [Research Notes](./research-notes.md). The current, evidence-gated plan is `jam-core`'s four modules (`codec`, `crypto`, `safrole`, `trie`) — see [`spec.md`](../../spec.md) §6.
+
 ## 🔧 Principle: Simplicity Is Strength
 
 > Complexity is fragility. Simplicity is power.

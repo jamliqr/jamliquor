@@ -10,9 +10,10 @@ We are building:
 ---
 
 ## 🔬 What This Means
-- Many concepts (edge execution, AI inference, PQC modularity) have not yet passed formal audits or rigorous research.
+- The core claims (conformance, edge-hardware cost) are unproven hypotheses under test, not settled facts — see [`spec.md`](../../spec.md).
 - This project evolves **in the open**, and you may encounter broken builds, failed assumptions, or shifting structures.
-- We **expect failure**. We are building through it.
+- We **expect failure**. Pre-committed stop conditions exist, and honoring them — including archiving the project — counts as success, not failure.
+- AI inference and PQC were evaluated and retired from scope after the [2026 reassessment](../REASSESSMENT/README.md); see [Research Notes](./research-notes.md) for why.
 
 > If it works: credit belongs to the builders who dared to dream.
 > If it fails: the lessons will shape what comes next.

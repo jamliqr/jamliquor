@@ -25,6 +25,8 @@
   - [Planned Enhancements](#planned-enhancements)
   - [Research Areas](#research-areas)
 
+> **Status:** Pre-pivot design vision. Networking is explicitly **out of current scope** — see [`spec.md`](../../spec.md) §2 (binding non-goals). No code in this repo implements any of the below. Kept for historical reference only.
+
 ## Overview
 JamLiquor implements a peer-to-peer network architecture optimized for JAM Protocol communication. This document outlines the network stack, protocols, and design decisions.
 
@@ -43,7 +45,6 @@ JamLiquor implements a peer-to-peer network architecture optimized for JAM Proto
 - Light client support
 
 ### 3. Network Security
-- Post-quantum secure transport encryption
 - DoS protection mechanisms
 - Peer reputation system
 - Bandwidth management
@@ -145,4 +146,4 @@ nodes = [
 ---
 
 **Navigation**
-Previous: [Architecture Overview](./ARCHITECTURE.md) | Next: [AI & Machine Learning](./AI.md)
+Previous: [Architecture Overview](./ARCHITECTURE.md) | Next: [Research Notes](./research-notes.md)

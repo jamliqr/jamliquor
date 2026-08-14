@@ -1,5 +1,7 @@
 # Simplicity is Strength
 
+> **Status:** Design philosophy, still current in spirit. The concrete module list below (PolkaVM execution model, `extensions/`) is pre-pivot; the current plan is `jam-core`'s four modules — see [`spec.md`](../../spec.md) §6.
+
 > Complexity is fragility. Simplicity is power.
 
 JamLiquor is intentionally minimalist—not because we lack ambition, but because **trustless systems should be understandable**, extensible, and verifiable by anyone.

@@ -1,7 +1,7 @@
 [book]
 title = "JamLiquor Documentation"
 author = "JamLiquor Contributors"
-description = "A cleanroom JAM client built for the edge, simplicity, adaptability, and post-quantum readiness."
+description = "A cleanroom JAM protocol research core: binary-vector conformance and constrained-hardware benchmarks."
 language = "en"
 
 [output.html]

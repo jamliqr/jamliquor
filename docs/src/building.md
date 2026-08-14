@@ -1,5 +1,7 @@
 # Building JamLiquor
 
+> **Status:** Cross-compilation targets are the MVP-2/3 benchmark targets (due 2027-02-15), not yet wired into CI — see [`spec.md`](../../spec.md) §4 and `Plans.md` Phase 5.
+
 ## Cross-Compilation Support
 
 JamLiquor supports cross-compilation for multiple architectures:

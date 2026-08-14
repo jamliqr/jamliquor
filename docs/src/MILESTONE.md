@@ -1,173 +1,68 @@
-# 🚀 MILESTONE.md — Project Roadmap & Improvements
+# 🚀 MILESTONE.md — Roadmap
+
+[← Back to Index](./index.md)
 
 ## 📋 Overview
 
-This document outlines the detailed roadmap for JamLiquor development, including current progress, planned improvements, and technical specifications for each milestone.
+This roadmap reflects the [2026 reassessment PIVOT decision](../REASSESSMENT/README.md). It replaces the pre-pivot Authorer / PolkaVM / Modular Extensions roadmap, which is archived at [`docs/archive/TODO-2026-04.md`](../archive/TODO-2026-04.md) for history. Task-level tracking lives in [`Plans.md`](../../Plans.md); this document states only the milestone gates and dates from [`spec.md`](../../spec.md) §4.
 
-## 🎯 Milestone 1: Importer (Current)
+There are exactly two milestones in current scope. Nothing past MVP-2/3 is planned until MVP-2/3 lands — see the stop conditions below.
 
-### Current Implementation
-- JAM-compliant state machine
-- Block and WorkReport validation
-- Basic ticket and preimage indexing
-- Memory-efficient state tracking
+## 🎯 MVP-1 — Narrow Conformance
 
-### Planned Improvements
+**Due: 2026-11-15**
 
-#### 1. State Pruning
-```rust
-pub struct State {
-    prune_threshold: Option<u64>,  // Configurable pruning threshold
-    pruned_slots: Vec<u32>,        // Track pruned slots
-}
-```
-- Add configurable pruning strategy
-- Implement state snapshotting
-- Support partial state validation
+Decode/encode round-trip of the official **binary codec vectors** (tiny + full configurations) plus green **`stf/safrole`** vectors, running as a required CI check. Vector authority: `w3f/jamtestvectors`, frozen at **v0.7.1, commit `1dc503a`** for the duration of this milestone (`spec.md` §3).
 
-#### 2. Performance Optimization
-```rust
-pub struct State {
-    #[cfg(feature = "profiling")]
-    metrics: StateMetrics,
-}
-```
-- Add compile-time optimizations
-- Implement performance profiling
-- Add edge device benchmarks
+No other code changes until this is green: no edge tuning, no benchmarks, no new README claims (`spec.md`'s conformance-first rule).
 
-#### 3. Enhanced Error Handling
-```rust
-#[derive(Debug, thiserror::Error)]
-pub enum StateError {
-    #[error("Invalid slot transition: {0} -> {1}")]
-    InvalidSlotTransition(u64, u64),
-    #[error("Ticket validation failed: {0}")]
-    TicketValidation(String),
-}
-```
-- Create specific error types
-- Improve error context
-- Add recovery strategies
+### Scope
 
-#### 4. Testing Framework
-- Add property-based testing
-- Implement edge device simulation
-- Create performance test suite
+- JAM binary codec (variable-length integers, sequences, discriminators) per Gray Paper v0.7.1
+- Header + extrinsic structs, byte-exact round-trip
+- Ed25519 verification, Blake2b-256, Bandersnatch ring VRF (verification only, via audited crates — no hand-rolled cryptography)
+- Safrole state transition: tickets, epoch marks, fallback selection, Fisher-Yates shuffle
 
-#### 5. Documentation
-```rust
-/// State structure for tracking JAM protocol state.
-///
-/// Memory Usage:
-/// - Fixed: ~100 bytes
-/// - Per ticket: ~40 bytes
-/// - Per preimage: ~32 bytes + blob size
-///
-/// Total memory usage grows linearly with processed blocks
-/// but can be pruned based on configuration.
-pub struct State {
-    // ... existing fields ...
-}
-```
-- Document memory requirements
-- Add edge device usage examples
-- Create architecture diagrams
+### Out of scope for MVP-1
 
-### Technical Specifications
-- Memory target: ≤128MB RAM
-- Block processing time: <100ms
-- State validation: O(1) for recent blocks
-- Error recovery: Automatic for common cases
+Work packages, Refine, Accumulate, PVM, service model, networking, availability/erasure coding, storage trie. See `spec.md` §6 for the architecture this targets.
 
-## 🎯 Milestone 2: Authorer
+## 🎯 MVP-2/3 — Edge Evidence (Gate G3)
 
-### Planned Features
-- SAFROLE block production
-- Ring VRF integration
-- Rate-limited authorship
-- Adaptive difficulty adjustment
+**Due: 2027-02-15**
 
-### Technical Requirements
-- Memory target: ≤64MB RAM
-- Block production time: <6s
-- VRF computation: <100ms
-- Network latency tolerance: 2s
+The same conformant core, cross-compiled and benchmarked on **one ARM64 SBC and one RISC-V SBC**: peak RAM, binary size, vectors/sec, startup time.
 
-## 🎯 Milestone 3: PolkaVM Integration
+This is the project's central research experiment and the only test of Gate G3 — see `spec.md` §4 for the exact PASS wording (workload evidence within Tier-B budgets, not a claim of a deployable role).
 
-### Planned Features
-- RISC-V 64-bit backend
-- JAM syscall interface
-- Metered execution
-- Sandboxed environment
+### Deliverables
 
-### Technical Requirements
-- VM memory: ≤32MB RAM
-- JIT compilation: <50ms
-- Execution overhead: <10%
-- Syscall latency: <1ms
+- Cross-compilation targets in CI (`aarch64-unknown-linux-gnu`, `riscv64gc-unknown-linux-gnu`)
+- Reproducible benchmark harness with machine-readable output
+- Measurements on real hardware, committed to the repo
+- A published technical report (the named contributor-attraction mechanism — `spec.md` §7)
 
-## 🎯 Milestone 4: Modular Extensions
+## 🛑 Stop conditions
 
-### Planned Modules
-1. `jamliquor-pqc`
-   - Dilithium signatures
-   - Kyber key exchange
-   - XMSS stateful signatures
+Per `spec.md` §5, the pivot is killed and the repo archived if any of:
 
-2. `jamliquor-ai`
-   - TinyML inference
-   - Adaptive networking
-   - Performance prediction
+1. Codec + safrole vectors not green by 2026-11-15
+2. No SBC benchmark exists by 2027-02-15
+3. Benchmarks show no meaningful resource advantage for any JAM role vs. an existing client
+4. Two consecutive months pass with zero commits (CI-monitored, `Plans.md` Phase 2)
 
-3. `jamliquor-lite`
-   - Minimal runtime
-   - Pruned state support
-   - Light client mode
+Archiving on schedule is a documented successful outcome of the 2026 reassessment, not a failure.
 
-### Technical Requirements
-- Module memory: ≤16MB RAM each
-- Hot-swappable components
-- Zero-downtime updates
-- Backward compatibility
+## ⏱ Time budget
 
-## 🎯 Milestone 5: Edge & Performance Validation
+**Mode B: 3–5 hours/week, hard-capped.** Medicine remains the primary profession. Mode C (10+ h/week) is prohibited unless MVP-3 produces a measured, competitive result **and** an external contributor has landed a nontrivial PR.
 
-### Validation Targets
-- Finality: <20s on 128MB RAM
-- Throughput: Match JAM spec
-- Network: 1000+ edge nodes
-- Uptime: 99.9% on edge devices
+---
 
-### Performance Metrics
-- CPU usage: <50% on 1GHz
-- Memory usage: ≤128MB peak
-- Network bandwidth: ≤1MB/s
-- Storage: ≤1GB total
+**Navigation**
+Previous: [Cleanroom Policy](./CLEANROOM.md)
 
-## 📊 Progress Tracking
-
-### Current Status
-- [x] Basic importer implementation
-- [ ] State pruning
-- [ ] Performance optimization
-- [ ] Enhanced error handling
-- [ ] Testing framework
-- [ ] Documentation updates
-
-### Next Steps
-1. Implement state pruning
-2. Add performance profiling
-3. Enhance error handling
-4. Create test framework
-5. Update documentation
-
-## 🔄 Update Process
-
-This document is updated:
-- Weekly with progress
-- Monthly with milestone reviews
-- Quarterly with roadmap adjustments
-
-Last Updated: [Current Date]
+**Related Topics**
+- [Product Contract (spec.md)](../../spec.md)
+- [Task Ledger (Plans.md)](../../Plans.md)
+- [2026 Reassessment & Decision](../REASSESSMENT/README.md)

@@ -16,9 +16,10 @@
 ## Overview
 JamLiquor is a **cleanroom Rust implementation** of the JAM Protocol. It has been built from scratch to ensure:
 
-- JAM Prize eligibility
 - Legal and ethical separation from existing implementations
 - Trust in code provenance and conformance
+
+> **Note:** JAM Prize entrant status is explicitly out of current scope — see [`spec.md`](../../spec.md) §1/§2. Cleanroom provenance is maintained on its own merits (auditability, legal separation), not as prize-track preparation. The historical "Allowed materials" and "JAM Prize assessments" references below predate that decision and are kept as an accurate account of how the codebase was actually built.
 
 This document outlines how we ensure our cleanroom standards.
 
@@ -46,9 +47,8 @@ A cleanroom implementation ensures:
    - Official documentation and diagrams (HackMD, GitHub wikis)
 
 3. **Codebase boundaries**:
-   - All core components (`importer`, `authorer`, `vm`) are written independently
-   - Any reused crates are open-source and third-party (e.g. `blake3`, `dilithium`, `tinyml`)
-   - Modular extensions are explicitly separated from JAM core logic
+   - Core components (`jam-core`: codec, crypto, safrole, trie — see [`spec.md`](../../spec.md) §6) are written independently
+   - Any reused crates are open-source, third-party, and audited (e.g. `blake2b_simd`, `ed25519-dalek`) — no PQC or AI crates; those are retired from scope, see [Research Notes](./research-notes.md)
 
 4. **Contributors declare compliance**:
    - All contributors agree to cleanroom principles

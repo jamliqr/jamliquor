@@ -4,6 +4,8 @@
 
 This document provides a comprehensive guide to the test vectors used in the JamLiquor implementation, detailing their purpose, structure, and significance in validating the JAM protocol implementation.
 
+> **Vector pin:** `w3f/jamtestvectors` is frozen at **v0.7.1, commit `1dc503a`** for the duration of MVP-1 (due 2026-11-15) — see [`spec.md`](../../spec.md) §3. MVP-1 scope is codec + `stf/safrole` vectors only; the other categories below (traces, shuffle, trie, erasure) are documented for reference but not yet targeted.
+
 ## Vector Categories
 
 ### 1. Safrole Consensus Vectors

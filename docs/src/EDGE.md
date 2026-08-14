@@ -1,5 +1,7 @@
 # 📦 EDGE.md — Lightweight by Design
 
+> **Status:** Pre-pivot vision doc. Every claim below (smart-city deployments, PolkaVM sharding, swarm computation) is speculative and unmeasured — zero benchmarks exist as of 2026-08. The actual, evidence-gated question is narrower: what does a conformant codec + Safrole subset cost on one ARM64 and one RISC-V SBC? See [`spec.md`](../../spec.md) §4 (MVP-2/3) and [Project Status](../../README.md#-project-status) for what is currently measured (nothing yet).
+
 ## 🔧 Principle: Lightweight by Design
 
 > If your blockchain needs a server farm, it isn’t decentralized.

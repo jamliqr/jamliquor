@@ -2,175 +2,51 @@
 
 [← Back to Index](./index.md)
 
-## Table of Contents
-- [Vision](#vision)
-- [Core Principles](#core-principles)
-  - [Post-Quantum Security](#1-post-quantum-security)
-  - [Verifiable Execution](#2-verifiable-execution)
-  - [Performance and Efficiency](#3-performance-and-efficiency)
-  - [Compatibility and Standards](#4-compatibility-and-standards)
-- [Roadmap](#roadmap)
-- [Community Guidelines](#community-guidelines)
-- [Governance Model](#governance-model)
-- [Success Metrics](#success-metrics)
+# The JamLiquor Manifesto: A Cleanroom JAM Research Core
 
-# **The JamLiquor Manifesto: A Purpose-Driven JAM Client**
-
-Version 0.1.0 | March 2025
+Version 0.3.0 | 2026-08-14 (post-pivot)
 
 Drafted by: [Kresna Sucandra, MD](https://github.com/SHA888)
 
----
-
-## **📜 Preface**
-
-JamLiquor is a cleanroom, purpose-built client for the **JAM Protocol**. It embodies the JAM vision through five uncompromising principles:
-
-1. **Lightweight**: It must run on edge devices, not just cloud infrastructure.
-2. **Decentralized**: It empowers everyone, not just validators with datacenters.
-3. **Adaptive**: It leverages AI to understand and respond to changing network conditions.
-4. **Quantum-Resistant**: It prepares for tomorrow's threats today.
-5. **Simple**: It is auditable, comprehensible, and intentionally minimal.
-
-JamLiquor is not a blockchain project with JAM inside—it is **JAM through and through**, extended only by modular, non-invasive innovation.
-
-It is not a fork, nor a vision. It is a JAM client, ready to be tested, trusted, and deployed by anyone who shares these values.
+Supersedes: [Manifesto v0.1.0, March 2025](../archive/MANIFESTO-2025.md) (preserved verbatim for cleanroom provenance)
 
 ---
 
-## **🌎 The World We Inherit**
+## Why this manifesto changed
 
-### **The Cost of Centralization**
-Modern blockchains are **choking on their own success**. The dream of decentralization has given way to **corporate-controlled validator monopolies**, **energy-hungry consensus algorithms**, and **network layers requiring elite infrastructure**.
+JamLiquor's original manifesto committed to five principles: Lightweight, Decentralized, Adaptive (AI), Quantum-Resistant, Simple. In August 2026, a full [reassessment against the current JAM ecosystem](../REASSESSMENT/README.md) measured that commitment against evidence — 1,517 lines of Rust, ~0.3% of official test vectors exercised, zero edge-hardware benchmarks, zero AI code after a year of development. The outcome was **PIVOT**: keep the kernel of the original idea, drop what evidence didn't support.
 
-But the truth is simple:
+This document states what remains, and on what terms.
 
-> ⚠️ A blockchain that _cannot_ run on **a $10 board** is a **failed experiment in decentralization**.
+## The two claims that remain
 
-JamLiquor **restores balance** by being lean enough to run on **edge devices, IoT hardware, and personal hardware anywhere**. True decentralization isn't in data centers—it belongs **everywhere**.
+### 1. Lightweight — unproven, gated by measurement
 
-### **The Rise of Adaptive Infrastructure**
-Blockchains shouldn't be blind to the world around them. JamLiquor integrates:
-- **AI inference** to tune performance and security
-- **Context-awareness** to monitor and respond to network conditions
-- **Autonomous intelligence** to simplify validator and system maintenance
+> A blockchain client that cannot run on a $10 board is worth investigating, not assuming works.
 
-Blockchains must evolve—or be outpaced.
+Nobody in the ~43-team JAM ecosystem has published constrained-hardware benchmarks. That silence is either an opportunity or a reason nobody bothered — JamLiquor's job is to find out, on real ARM64 and RISC-V single-board computers, and publish the numbers whether they're good or not. See [`spec.md`](../../spec.md) §4 (MVP-2/3) for the gate.
 
-### **The Quantum Threat**
-Assumptions that power today's cryptography—**ECDSA, sr25519, RSA**—will be broken in tomorrow's quantum age.
+### 2. JAM-native — unproven, gated by conformance
 
-JamLiquor acts now:
-- Uses **Dilithium, Kyber, and XMSS** via modular interfaces
-- Prepares for **forward secrecy** and **quantum-safe key rotation**
-- Builds confidence in systems that must last decades
+> Containing JAM-related code is not the same as being a JAM implementation.
 
-Quantum readiness is not optional—it is existential.
+JamLiquor's own 2026 audit found it was a JSON-fixture importer, not a conformant client. "JAM-native" is earned only when a defined subset (binary codec + Safrole state transition) provably agrees with the official `w3f/jamtestvectors`. See [`spec.md`](../../spec.md) §3–4 (MVP-1) for the gate.
 
-### **The Simplicity We Lost**
-As blockchain ecosystems evolved, so did their complexity: rollups, recursive proofs, bridges, multichains.
+## What was retired, and why
 
-JamLiquor chooses another path:
-- **One execution model**
-- **One unified state**
-- **One protocol**: JAM
+- **Adaptive (AI inference)** — evaluated against three concrete models in the 2026 reassessment; all require infrastructure outside JAM's scope. Application-layer idea, not a client feature. One paragraph kept at [`docs/src/research-notes.md`](./research-notes.md).
+- **Quantum-Resistant (PQC)** — JAM's protocol cryptography is fixed by the Gray Paper; non-conformant signatures cannot interoperate, and PQ primitives are far larger than the classical ones they'd replace. One paragraph kept at [`docs/src/research-notes.md`](./research-notes.md).
+- **Full validator / JAM Prize entrant** — the prize-track catch-up window is closed (~43 teams, ~15 M1 submissions, multiple Rust clients at 100% public-suite conformance by the time this pivot happened). Competing there now has no realistic path at 3–5 hours/week.
 
-Minimalism is not regression—it is **resilience**.
+## What JamLiquor is not
 
----
+Not a fork. Not a production node. Not a validator. Not a marketing claim ahead of a green CI job. See [`spec.md`](../../spec.md) §2 for the full binding non-goals list.
 
-## **⚡ The JamLiquor Principles**
+## Terms of engagement
 
-### **1. Lightweight by Design**
-If your blockchain needs a server farm, it isn't decentralized. JamLiquor is:
-- Built for <128MB RAM devices
-- Targeted for RISC-V edge hardware
-- Performance-aware at compile time
-
-> Curious how blockchain can realistically run on low-resource devices like Milk-V Duo? See [EDGE.md](./EDGE.md) page for a full breakdown of how JAM, PolkaVM, and distributed architecture make it possible.
-
-### **2. Decentralization Must Be Real**
-JamLiquor enables:
-- Participation from anyone, anywhere
-- Local-first networking
-- No dependence on centralized relays
-
-### **3. Adaptability Through Inference**
-By embedding AI:
-- Smart contracts can observe their environment
-- Nodes can self-optimize
-- Systems become predictive, not reactive
-
-> Want to know how AI inference powers adaptation in JamLiquor? See [AI.md](./AI.md) to explore real-time, context-aware smart contract behavior and validator logic.
-
-### **4. Quantum Resistance is Non-Negotiable**
-JamLiquor offers:
-- PQ-safe keypairs as drop-in replacements
-- Seamless signature validation across quantum and classical users
-- Modular upgrades for future cryptography
-
-> Curious about how JamLiquor defends against quantum threats? Check out [PQC.md](./PQC.md) for our approach to integrating Dilithium, Kyber, and more.
-
-### **5. Simplicity is Power**
-Every line of code in JamLiquor serves a purpose. There are no:
-- Unnecessary abstractions
-- Recursive circuits
-- Unverifiable complexity
-
-> The more complex the system, the easier it is to break—and harder to fix.
-
----
-
-## **🌌 The Vision: JamLiquor in a JAM World**
-
-Imagine a world where:
-- A decentralized city council runs on a $9 Milk-V Duo
-- Validators self-regulate through AI without human tuning
-- Long-term data and contracts remain valid in a post-quantum future
-- Citizens can audit and build their own JAM node in a weekend
-
-JamLiquor is how we get there.
-
----
-
-## **📦 Roadmap**
-
-### Milestone 1: **Importer**
-- JAM-compliant state machine
-- CoreTime and WorkReports
-
-### Milestone 2: **Authorer**
-- SAFROLE authoring
-- Ring VRF integration
-
-### Milestone 3: **PolkaVM**
-- 64-bit RISC-V backend
-- JAM syscall model support
-
-### Milestone 4: **Extensions**
-- PQC module: `jamliquor-pqc`
-- AI Inference module: `jamliquor-ai`
-- Lite runtime for <128MB devices: `jamliquor-lite`
-
-### Milestone 5: **Edge + Performance Validation**
-- Finality under 20s on 128MB RAM
-- Throughput parity with JAM spec
-
----
-
-## **🚀 Final Words**
-
-JamLiquor is more than a JAM client. It is a statement of belief:
-
-That decentralization must be simple.
-That security must be future-proof.
-That intelligence must be built-in.
-That access must be universal.
-
-This is the JAM client we deserve. This is JamLiquor.
-
-## Version: 0.1.0-alpha
-Last Updated: [Current Date]
+- Every capability claim in this repo's docs must map to a green CI job or a committed measurement artifact ([`spec.md`](../../spec.md) §8).
+- Time budget is capped at Mode B (3–5 h/week); Mode C requires evidence, not ambition ([`spec.md`](../../spec.md) §4).
+- Pre-committed stop conditions exist and will be honored — archiving this project on schedule if the evidence doesn't support continuing is a **successful outcome**, not a failure ([`spec.md`](../../spec.md) §5).
 
 ---
 
@@ -178,6 +54,6 @@ Last Updated: [Current Date]
 Previous: [Quick Start Guide](./README.md) | Next: [Cleanroom Policy](./CLEANROOM.md)
 
 **Related Topics**
-- [Post-Quantum Implementation](./PQC.md)
-- [Network Architecture](./NETWORK.md)
-- [Development Guidelines](./CLEANROOM.md#-development-setup)
+- [Product Contract (spec.md)](../../spec.md)
+- [2026 Reassessment & Decision](../REASSESSMENT/README.md)
+- [Research Notes (AI, PQC)](./research-notes.md)

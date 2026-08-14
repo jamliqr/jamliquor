@@ -14,9 +14,8 @@
   - [🧱 Simplicity is Strength](SIMPLICITY.md)
 
 ## Technical Documentation
-- [🌐 Network Architecture](NETWORK.md)
-- [🤖 AI & Machine Learning](AI.md)
-- [🔐 Post-Quantum Cryptography](PQC.md)
+- [🌐 Network Architecture (pre-pivot vision, not current scope)](NETWORK.md)
+- [🔬 Research Notes (AI, PQC — retired from scope)](research-notes.md)
 
 ## Developer Resources
 - [🧪 Test Vector Conformation](CONFORMATION.md)
@@ -28,4 +27,4 @@
 ## Additional Information
 - [⚠️ Disclaimer](DISCLAIMER.md)
 - [📋 License Information](README.md#-license)
-- [❓ Troubleshooting Guide](README.md#-troubleshooting)
+- [❓ Troubleshooting Guide](../../README.md#-troubleshooting)

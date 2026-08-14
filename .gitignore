@@ -64,3 +64,8 @@ README-task-master.md
 # Task files
 # tasks.json
 # tasks/
+
+# Claude Code Harness session/runtime state
+/.claude/
+/.harness-mem/
+/out/
